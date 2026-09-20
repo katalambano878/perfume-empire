@@ -1,0 +1,6 @@
+[variables]
+NIXPACKS_NODE_VERSION = "20"
+NEXT_PUBLIC_USE_PLAIN_PG = "true"
+NEXT_PUBLIC_SUPABASE_URL = "https://perfume-empire.169-58-8-203.sslip.io"
+NEXT_PUBLIC_APP_URL = "https://perfume-empire.169-58-8-203.sslip.io"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "local-anon-key"

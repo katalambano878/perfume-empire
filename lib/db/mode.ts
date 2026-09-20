@@ -3,7 +3,11 @@
  * Production keeps using hosted Supabase until cutover.
  */
 export function isPlainPostgres(): boolean {
-  return !!(process.env.DATABASE_URL || process.env.POSTGRES_URL);
+  return !!(
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.NEXT_PUBLIC_USE_PLAIN_PG === "true"
+  );
 }
 
 export function authJwtSecret(): string {
