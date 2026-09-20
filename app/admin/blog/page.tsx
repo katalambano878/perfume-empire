@@ -10,12 +10,12 @@ export default function AdminBlogPage() {
   const posts = [
     {
       id: 1,
-      title: '10 Essential Tips for Creating a Minimalist Home',
-      slug: '10-essential-tips-minimalist-home',
-      author: 'Sarah Johnson',
-      category: 'Interior Design',
-      image: 'https://readdy.ai/api/search-image?query=modern%20minimalist%20living%20room%20interior%20design%20with%20clean%20lines%20natural%20light%20and%20simple%20elegant%20furniture%20in%20neutral%20tones&width=600&height=400&seq=blogadm1&orientation=landscape',
-      excerpt: 'Discover how to transform your living space into a serene minimalist haven with these practical tips...',
+      title: 'How to Choose Your Signature Scent',
+      slug: 'how-to-choose-your-signature-scent',
+      author: 'The Perfume Empire',
+      category: 'Fragrance Tips',
+      image: 'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottles%20on%20marble%20with%20soft%20natural%20light%20fragrance%20editorial&width=600&height=400&seq=blogadm1&orientation=landscape',
+      excerpt: 'A practical guide to finding a fragrance that lasts and feels like you...',
       status: 'Published',
       views: 2456,
       comments: 23,
@@ -24,12 +24,12 @@ export default function AdminBlogPage() {
     },
     {
       id: 2,
-      title: 'The Art of Choosing Perfect Home Textiles',
-      slug: 'art-of-choosing-perfect-home-textiles',
-      author: 'Michael Chen',
-      category: 'Home Styling',
-      image: 'https://readdy.ai/api/search-image?query=luxurious%20home%20textiles%20collection%20with%20cotton%20linens%20throws%20and%20pillows%20in%20natural%20cream%20and%20beige%20tones%20on%20elegant%20display&width=600&height=400&seq=blogadm2&orientation=landscape',
-      excerpt: 'Learn the secrets to selecting textiles that elevate your home aesthetic and comfort...',
+      title: 'Oud vs Floral: Understanding Fragrance Families',
+      slug: 'oud-vs-floral-fragrance-families',
+      author: 'The Perfume Empire',
+      category: 'Education',
+      image: 'https://readdy.ai/api/search-image?query=oud%20wood%20and%20rose%20petals%20beside%20perfume%20bottles%20on%20clean%20background&width=600&height=400&seq=blogadm2&orientation=landscape',
+      excerpt: 'Learn the difference between oud, floral, fresh, and oriental scents...',
       status: 'Published',
       views: 1892,
       comments: 18,
@@ -38,12 +38,12 @@ export default function AdminBlogPage() {
     },
     {
       id: 3,
-      title: 'Sustainable Living: Eco-Friendly Home Products Guide',
-      slug: 'sustainable-living-eco-friendly-guide',
-      author: 'Emma Williams',
-      category: 'Sustainability',
-      image: 'https://readdy.ai/api/search-image?query=eco-friendly%20sustainable%20home%20products%20including%20natural%20materials%20bamboo%20organic%20cotton%20and%20reusable%20items%20arranged%20aesthetically&width=600&height=400&seq=blogadm3&orientation=landscape',
-      excerpt: 'Make conscious choices for your home with our comprehensive guide to sustainable products...',
+      title: 'Wholesale Buying Tips for Resellers in Accra',
+      slug: 'wholesale-buying-tips-resellers-accra',
+      author: 'The Perfume Empire',
+      category: 'Wholesale',
+      image: 'https://readdy.ai/api/search-image?query=perfume%20bottles%20arranged%20for%20wholesale%20display%20in%20a%20boutique&width=600&height=400&seq=blogadm3&orientation=landscape',
+      excerpt: 'How to stock the right fragrances for your shop or market stall...',
       status: 'Published',
       views: 3124,
       comments: 31,
@@ -52,12 +52,12 @@ export default function AdminBlogPage() {
     },
     {
       id: 4,
-      title: 'Lighting Design: Creating Ambiance in Every Room',
-      slug: 'lighting-design-creating-ambiance',
-      author: 'David Martinez',
-      category: 'Interior Design',
-      image: 'https://readdy.ai/api/search-image?query=elegant%20contemporary%20home%20lighting%20design%20with%20brass%20fixtures%20pendant%20lights%20and%20table%20lamps%20creating%20warm%20ambient%20atmosphere&width=600&height=400&seq=blogadm4&orientation=landscape',
-      excerpt: 'Master the art of lighting to transform the mood and functionality of your spaces...',
+      title: 'How to Make Perfume Last Longer',
+      slug: 'how-to-make-perfume-last-longer',
+      author: 'The Perfume Empire',
+      category: 'Fragrance Tips',
+      image: 'https://readdy.ai/api/search-image?query=person%20applying%20perfume%20to%20wrist%20soft%20lighting%20editorial&width=600&height=400&seq=blogadm4&orientation=landscape',
+      excerpt: 'Simple application and storage habits that keep your scent on skin longer...',
       status: 'Draft',
       views: 0,
       comments: 0,
@@ -66,12 +66,12 @@ export default function AdminBlogPage() {
     },
     {
       id: 5,
-      title: 'Gift Guide: Thoughtful Home Accessories',
-      slug: 'gift-guide-thoughtful-home-accessories',
-      author: 'Sarah Johnson',
+      title: 'Gift Guide: Fragrances for Every Occasion',
+      slug: 'gift-guide-fragrances-for-every-occasion',
+      author: 'The Perfume Empire',
       category: 'Gift Ideas',
-      image: 'https://readdy.ai/api/search-image?query=curated%20collection%20of%20elegant%20home%20accessories%20and%20decor%20items%20beautifully%20arranged%20as%20gift%20ideas%20on%20clean%20white%20background&width=600&height=400&seq=blogadm5&orientation=landscape',
-      excerpt: 'Find the perfect gifts for home lovers with our carefully curated selection...',
+      image: 'https://readdy.ai/api/search-image?query=perfume%20gift%20set%20beautifully%20wrapped%20on%20clean%20white%20background&width=600&height=400&seq=blogadm5&orientation=landscape',
+      excerpt: 'Find the right bottle or set for birthdays, weddings, and everyday gifts...',
       status: 'Scheduled',
       views: 0,
       comments: 0,
@@ -80,12 +80,12 @@ export default function AdminBlogPage() {
     },
     {
       id: 6,
-      title: 'Color Psychology: Choosing the Right Palette',
-      slug: 'color-psychology-choosing-palette',
-      author: 'Michael Chen',
-      category: 'Home Styling',
-      image: 'https://readdy.ai/api/search-image?query=color%20palette%20swatches%20and%20paint%20samples%20in%20harmonious%20neutral%20and%20earth%20tones%20for%20interior%20design%20inspiration&width=600&height=400&seq=blogadm6&orientation=landscape',
-      excerpt: 'Understand how colors affect mood and create the perfect atmosphere in your home...',
+      title: 'Visit Us in East Legon',
+      slug: 'visit-us-in-east-legon',
+      author: 'The Perfume Empire',
+      category: 'Store',
+      image: 'https://readdy.ai/api/search-image?query=perfume%20boutique%20interior%20with%20bottles%20on%20shelves%20warm%20lighting&width=600&height=400&seq=blogadm6&orientation=landscape',
+      excerpt: 'Come smell before you buy at The Perfume Empire, near America House...',
       status: 'Published',
       views: 1567,
       comments: 14,
@@ -160,9 +160,9 @@ export default function AdminBlogPage() {
               </select>
               <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer">
                 <option>All Categories</option>
-                <option>Interior Design</option>
-                <option>Home Styling</option>
-                <option>Sustainability</option>
+                <option>Fragrance Tips</option>
+                <option>Education</option>
+                <option>Wholesale</option>
                 <option>Gift Ideas</option>
               </select>
               <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer">

@@ -137,10 +137,10 @@ export default function Home() {
           },
           {
             image: '/Whisk_50c2f050b440b4b95064c372c1ec7ee1dr.jpeg',
-            tag: 'Fashion & Style',
+            tag: 'Signature Scents',
             heading: <>Elegance <br /><span className="italic font-light text-rose-200">Redefined</span></>,
-            subtext: 'Step into the season with our exclusive fashion edits. Curated for the modern trendsetter.',
-            cta: { text: 'Shop Fashion', href: '/shop?category=fashion' },
+            subtext: 'Step into the season with our exclusive fragrance edits. Curated for everyday wear and special occasions.',
+            cta: { text: 'Shop Fragrances', href: '/shop' },
             cta2: { text: 'Learn More', href: '/about' },
             position: 'object-top'
           },

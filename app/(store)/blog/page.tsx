@@ -3,8 +3,8 @@ import Link from 'next/link';
 export default function BlogPage() {
   const featuredPost = {
     id: '1',
-    title: 'The Ultimate Guide to Online Shopping in Ghana',
-    excerpt: 'Everything you need to know about safe, convenient online shopping in Ghana. From payment methods to delivery options, we cover it all.',
+    title: 'How to Shop Fragrances Online in Ghana',
+    excerpt: 'Everything you need to know about buying perfume online in Ghana. From payment methods to delivery, we cover it all.',
     image: 'https://readdy.ai/api/search-image?query=Modern%20African%20woman%20shopping%20online%20on%20laptop%20in%20bright%20contemporary%20home%20office%20coffee%20cup%20plants%20natural%20light%20relaxed%20lifestyle%20photography%20minimal%20clean%20background&width=1200&height=600&seq=blog1&orientation=landscape',
     category: 'Shopping Tips',
     date: 'December 15, 2024',
@@ -15,18 +15,18 @@ export default function BlogPage() {
   const posts = [
     {
       id: '2',
-      title: '10 Must-Have Products for Your Home This Season',
-      excerpt: 'Discover the trending products that will elevate your living space and make your home more comfortable and stylish.',
-      image: 'https://readdy.ai/api/search-image?query=Beautiful%20modern%20African%20home%20interior%20with%20stylish%20furniture%20decor%20items%20plants%20bright%20natural%20lighting%20contemporary%20design%20magazine%20quality%20photography&width=800&height=500&seq=blog2&orientation=landscape',
-      category: 'Home & Living',
+      title: '10 Must-Have Fragrances This Season',
+      excerpt: 'Discover the trending scents that will elevate your collection for everyday wear and special occasions.',
+      image: 'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottles%20on%20marble%20seasonal%20fragrance%20collection%20editorial%20photography&width=800&height=500&seq=blog2&orientation=landscape',
+      category: 'Fragrance Tips',
       date: 'December 12, 2024',
       readTime: '6 min read',
       author: 'Yaw Darko'
     },
     {
       id: '3',
-      title: 'How to Choose Quality Products: A Buyer\'s Guide',
-      excerpt: 'Learn the key indicators of quality products and how to make informed purchasing decisions that offer the best value for your money.',
+      title: 'How to Choose Quality Perfume: A Buyer\'s Guide',
+      excerpt: 'Learn the key indicators of authentic fragrance and how to make informed buying decisions that offer the best value.',
       image: 'https://readdy.ai/api/search-image?query=Person%20examining%20product%20quality%20checking%20labels%20and%20details%20in%20bright%20retail%20setting%20closeup%20hands%20inspecting%20merchandise%20professional%20photography%20clean%20background&width=800&height=500&seq=blog3&orientation=landscape',
       category: 'Buying Guide',
       date: 'December 10, 2024',
@@ -35,8 +35,8 @@ export default function BlogPage() {
     },
     {
       id: '1',
-      title: 'The Ultimate Guide to Online Shopping in Ghana',
-      excerpt: 'Everything you need to know about safe, convenient online shopping in Ghana. From payment methods to delivery options.',
+      title: 'How to Shop Fragrances Online in Ghana',
+      excerpt: 'Everything you need to know about buying perfume online in Ghana. From payment methods to delivery options.',
       image: 'https://readdy.ai/api/search-image?query=Modern%20African%20woman%20shopping%20online%20on%20laptop%20in%20bright%20contemporary%20home%20office%20coffee%20cup%20plants%20natural%20light%20relaxed%20lifestyle%20photography%20minimal%20clean%20background&width=800&height=500&seq=blog1b&orientation=landscape',
       category: 'Shopping Tips',
       date: 'December 15, 2024',
@@ -49,7 +49,7 @@ export default function BlogPage() {
     { name: 'All Posts', count: 12, icon: 'ri-article-line' },
     { name: 'Shopping Tips', count: 5, icon: 'ri-shopping-bag-line' },
     { name: 'Product Reviews', count: 4, icon: 'ri-star-line' },
-    { name: 'Home & Living', count: 3, icon: 'ri-home-line' },
+    { name: 'Fragrance Tips', count: 3, icon: 'ri-drop-line' },
     { name: 'Buying Guide', count: 6, icon: 'ri-guide-line' },
     { name: 'News', count: 2, icon: 'ri-newspaper-line' }
   ];

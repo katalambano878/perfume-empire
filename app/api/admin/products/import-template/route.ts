@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
 const SAMPLE_CSV = `name,description,category,price,compare_at_price,quantity,moq,status,featured,seo_title,seo_description,keywords,low_stock_threshold,preorder_shipping,images,variant_color,variant_color_hex,variant_size,variant_price,variant_stock
-"Wireless Bluetooth Earbuds","Premium wireless Bluetooth 5.3 earbuds with ANC and 30hr battery.","Electronics",89.99,120.00,150,1,"Active",true,"Wireless Bluetooth Earbuds","Shop premium wireless earbuds.","earbuds,bluetooth,wireless",5,,"earbuds-white.jpg;earbuds-case.jpg",,,,,,
-"Classic Cotton T-Shirt","100% premium combed cotton t-shirt.","Fashion",35.00,50.00,,2,"Active",true,"Classic Cotton T-Shirt","Premium cotton t-shirt.","basics,cotton",5,,"tshirt-black.jpg;tshirt-white.jpg","Black","#000000","S",35.00,80
-"Classic Cotton T-Shirt","100% premium combed cotton t-shirt.","Fashion",35.00,50.00,,2,"Active",true,"Classic Cotton T-Shirt","Premium cotton t-shirt.","basics,cotton",5,,"tshirt-black.jpg;tshirt-white.jpg","Black","#000000","M",35.00,100
-"Classic Cotton T-Shirt","100% premium combed cotton t-shirt.","Fashion",35.00,50.00,,2,"Active",true,"Classic Cotton T-Shirt","Premium cotton t-shirt.","basics,cotton",5,,"tshirt-black.jpg;tshirt-white.jpg","White","#FFFFFF","M",38.00,90
+"Oud Intense Eau de Parfum","Rich oud fragrance with warm amber and musk. Long-lasting unisex eau de parfum.","Unisex",289.00,349.00,40,1,"Active",true,"Oud Intense Eau de Parfum","Shop Oud Intense at The Perfume Empire.","oud,perfume,unisex",5,,"oud-front.jpg;oud-box.jpg",,,,"50ml",289.00,25
+"Vanilla Musk Body Spray","Soft vanilla and musk body spray for everyday wear.","Women's",89.00,120.00,80,1,"Active",true,"Vanilla Musk Body Spray","Shop Vanilla Musk at The Perfume Empire.","vanilla,musk,body spray",5,,"vanilla-front.jpg;vanilla-cap.jpg",,,,"150ml",89.00,80
+"Citrus Fresh Eau de Toilette","Bright citrus cologne with a clean finish.","Men's",189.00,229.00,,1,"Active",true,"Citrus Fresh Eau de Toilette","Shop Citrus Fresh at The Perfume Empire.","citrus,fresh,edt",5,,"citrus-black.jpg;citrus-box.jpg",,,"50ml",189.00,30
+"Citrus Fresh Eau de Toilette","Bright citrus cologne with a clean finish.","Men's",189.00,229.00,,1,"Active",true,"Citrus Fresh Eau de Toilette","Shop Citrus Fresh at The Perfume Empire.","citrus,fresh,edt",5,,"citrus-black.jpg;citrus-box.jpg",,,"100ml",249.00,20
 `;
 
 export async function GET() {

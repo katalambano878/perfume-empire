@@ -38,7 +38,7 @@ The SMS notification system has been updated with improved security, better erro
 ### App Configuration
 | Variable | Purpose | Required |
 |----------|---------|----------|
-| `NEXT_PUBLIC_APP_URL` | Production URL (`https://discountdiscoveryzone.com/`) | Yes |
+| `NEXT_PUBLIC_APP_URL` | Production URL (`https://theperfumeempire.com/`) | Yes |
 
 ## 3. Important Setup Steps
 
@@ -51,7 +51,7 @@ The SMS notification system has been updated with improved security, better erro
 ### Step 2: Verify Moolre Callback URL
 The callback URL configured during payment should be:
 ```
-https://discountdiscoveryzone.com/api/payment/moolre/callback
+https://theperfumeempire.com/api/payment/moolre/callback
 ```
 
 **Note:** This URL is automatically set from the `NEXT_PUBLIC_APP_URL` environment variable.

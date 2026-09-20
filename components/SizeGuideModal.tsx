@@ -6,58 +6,30 @@ interface SizeGuideModalProps {
   category?: string;
 }
 
-export default function SizeGuideModal({ isOpen, onClose, category = 'General' }: SizeGuideModalProps) {
+export default function SizeGuideModal({ isOpen, onClose, category = 'Bottles' }: SizeGuideModalProps) {
   if (!isOpen) return null;
 
-  const sizeGuides: Record<string, any> = {
-    'Tops & Shirts': {
-      measurements: ['Chest', 'Waist', 'Length', 'Sleeve'],
+  const sizeGuides: Record<string, { measurements: string[]; sizes: Record<string, string>[] }> = {
+    Bottles: {
+      measurements: ['Volume', 'Typical', 'Travel'],
       sizes: [
-        { size: 'XS', chest: '32-34', waist: '24-26', length: '26', sleeve: '31' },
-        { size: 'S', chest: '34-36', waist: '26-28', length: '27', sleeve: '32' },
-        { size: 'M', chest: '38-40', waist: '30-32', length: '28', sleeve: '33' },
-        { size: 'L', chest: '42-44', waist: '34-36', length: '29', sleeve: '34' },
-        { size: 'XL', chest: '46-48', waist: '38-40', length: '30', sleeve: '35' },
-        { size: '2XL', chest: '50-52', waist: '42-44', length: '31', sleeve: '36' },
+        { size: '15ml', volume: '15ml', typical: 'Purse / pocket', travel: 'Yes' },
+        { size: '30ml', volume: '30ml', typical: 'Daily trial', travel: 'Yes' },
+        { size: '50ml', volume: '50ml', typical: 'Everyday wear', travel: 'Check airline' },
+        { size: '100ml', volume: '100ml', typical: 'Full bottle', travel: 'Checked bag' },
       ]
     },
-    'Bottoms': {
-      measurements: ['Waist', 'Hip', 'Inseam', 'Outseam'],
+    Oils: {
+      measurements: ['Volume', 'Typical', 'Travel'],
       sizes: [
-        { size: '26', waist: '26', hip: '36', inseam: '30', outseam: '40' },
-        { size: '28', waist: '28', hip: '38', inseam: '30', outseam: '40' },
-        { size: '30', waist: '30', hip: '40', inseam: '32', outseam: '42' },
-        { size: '32', waist: '32', hip: '42', inseam: '32', outseam: '42' },
-        { size: '34', waist: '34', hip: '44', inseam: '32', outseam: '42' },
-        { size: '36', waist: '36', hip: '46', inseam: '32', outseam: '42' },
+        { size: '3ml', volume: '3ml', typical: 'Sample', travel: 'Yes' },
+        { size: '6ml', volume: '6ml', typical: 'Personal', travel: 'Yes' },
+        { size: '12ml', volume: '12ml', typical: 'Regular use', travel: 'Yes' },
       ]
     },
-    'Shoes': {
-      measurements: ['UK', 'EU', 'US', 'CM'],
-      sizes: [
-        { size: '5', uk: '5', eu: '38', us: '6', cm: '23.5' },
-        { size: '6', uk: '6', eu: '39', us: '7', cm: '24.5' },
-        { size: '7', uk: '7', eu: '40-41', us: '8', cm: '25.5' },
-        { size: '8', uk: '8', eu: '42', us: '9', cm: '26.5' },
-        { size: '9', uk: '9', eu: '43', us: '10', cm: '27.5' },
-        { size: '10', uk: '10', eu: '44-45', us: '11', cm: '28.5' },
-        { size: '11', uk: '11', eu: '46', us: '12', cm: '29.5' },
-      ]
-    },
-    'General': {
-      measurements: ['Chest', 'Waist', 'Hip'],
-      sizes: [
-        { size: 'XS', chest: '32-34', waist: '24-26', hip: '34-36' },
-        { size: 'S', chest: '34-36', waist: '26-28', hip: '36-38' },
-        { size: 'M', chest: '38-40', waist: '30-32', hip: '40-42' },
-        { size: 'L', chest: '42-44', waist: '34-36', hip: '44-46' },
-        { size: 'XL', chest: '46-48', waist: '38-40', hip: '48-50' },
-        { size: '2XL', chest: '50-52', waist: '42-44', hip: '52-54' },
-      ]
-    }
   };
 
-  const guide = sizeGuides[category] || sizeGuides['General'];
+  const guide = sizeGuides[category] || sizeGuides.Bottles;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -85,12 +57,12 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'General' }
                   <i className="ri-information-line text-xl text-blue-600"></i>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-blue-900 mb-2">How to Measure</h3>
+                  <h3 className="font-semibold text-blue-900 mb-2">How to choose a size</h3>
                   <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• Use a soft measuring tape for accurate measurements</li>
-                    <li>• Measure over light clothing or undergarments</li>
-                    <li>• Keep the tape parallel to the floor</li>
-                    <li>• Take measurements at the fullest part of each area</li>
+                    <li>• Start with 15ml or 30ml if you are trying a new scent</li>
+                    <li>• 50ml is the everyday bottle for most customers</li>
+                    <li>• 100ml is best value if you already know the fragrance</li>
+                    <li>• Oils are concentrated — a few drops last a long time</li>
                   </ul>
                 </div>
               </div>
@@ -103,17 +75,17 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'General' }
                     <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Size</th>
                     {guide.measurements.map((measurement: string) => (
                       <th key={measurement} className="border border-gray-300 px-4 py-3 text-center font-semibold text-gray-900">
-                        {measurement} (inches)
+                        {measurement}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {guide.sizes.map((row: any, index: number) => (
+                  {guide.sizes.map((row, index) => (
                     <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="border border-gray-300 px-4 py-3 font-semibold text-gray-900">{row.size}</td>
                       {guide.measurements.map((measurement: string) => {
-                        const key = measurement.toLowerCase();
+                        const key = measurement.toLowerCase().replace(/\s+/g, '');
                         return (
                           <td key={measurement} className="border border-gray-300 px-4 py-3 text-center text-gray-700">
                             {row[key]}
@@ -130,15 +102,15 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'General' }
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <div className="w-6 h-6 flex items-center justify-center mr-2">
-                    <i className="ri-ruler-line text-blue-700"></i>
+                    <i className="ri-drop-line text-blue-700"></i>
                   </div>
-                  Measurement Tips
+                  Application tips
                 </h4>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li>• <strong>Chest:</strong> Measure around the fullest part</li>
-                  <li>• <strong>Waist:</strong> Measure around natural waistline</li>
-                  <li>• <strong>Hip:</strong> Measure around the fullest part</li>
-                  <li>• <strong>Inseam:</strong> Measure from crotch to ankle</li>
+                  <li>• Spray on pulse points: wrists, neck, behind ears</li>
+                  <li>• Do not rub spray perfume into the skin</li>
+                  <li>• Oils: apply a drop and let it warm on skin</li>
+                  <li>• Store bottles upright, away from heat and sun</li>
                 </ul>
               </div>
 
@@ -147,20 +119,20 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'General' }
                   <div className="w-6 h-6 flex items-center justify-center mr-2">
                     <i className="ri-question-line text-blue-700"></i>
                   </div>
-                  Fit Guide
+                  Need help?
                 </h4>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li>• Between sizes? Size up for comfort</li>
-                  <li>• Check product description for fit notes</li>
-                  <li>• Read customer reviews for insights</li>
-                  <li>• Contact support for personalized help</li>
+                  <li>• Ask in store at East Legon, near America House</li>
+                  <li>• Check the product page for concentration</li>
+                  <li>• Read customer reviews for longevity notes</li>
+                  <li>• Call or WhatsApp 055 396 7658</li>
                 </ul>
               </div>
             </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600 mb-4">
-                Still not sure about sizing? Our customer service team is here to help!
+                Still not sure which size to buy? Our team can help you choose.
               </p>
               <button className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors whitespace-nowrap">
                 Contact Support

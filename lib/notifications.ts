@@ -1,17 +1,17 @@
 import { Resend } from 'resend';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { escapeHtml } from '@/lib/sanitize';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'missing_api_key');
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tiwaperfumestyle@gmail.com';
-const EMAIL_FROM = process.env.EMAIL_FROM || 'TIWAA PERFUME STYLE HOUSE <tiwaperfumestyle@gmail.com>';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@theperfumeempire.com';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'The Perfume Empire <hello@theperfumeempire.com>';
 const BRAND = {
-    name: 'TIWAA PERFUME STYLE HOUSE',
+    name: 'The Perfume Empire',
     color: '#2563eb',
     colorLight: '#eff6ff',
     colorDark: '#064e3b',
     url: (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, ''),
-    phone: '+233545010949',
+    phone: '+233553967658',
 };
 
 // Reusable branded email layout
@@ -154,7 +154,7 @@ export async function sendSMS({ to, message }: { to: string; message: string }) 
             },
             body: JSON.stringify({
                 type: 1,
-                senderid: 'TIWAA',
+                senderid: 'EMPIRE',
                 messages: [
                     {
                         recipient: recipient,
@@ -219,7 +219,7 @@ export async function sendOrderConfirmation(order: any) {
     // Fetch order items to get preorder_shipping info
     let shippingNotes: string[] = [];
     try {
-        const { data: items } = await supabase
+        const { data: items } = await supabaseAdmin
             .from('order_items')
             .select('product_name, metadata')
             .eq('order_id', id);
@@ -296,7 +296,7 @@ ${emailButton('View Order in Admin', `${baseUrl}/admin/orders/${id}`)}
     if (phone) {
         const smsMessage = trackingNumber
             ? `Hi ${name}, your order #${order_number || id} is confirmed! Tracking: ${trackingNumber}. Track here: ${trackingUrl}${shippingNotesSms}`
-            : `Hi ${name}, your order #${order_number || id} at TIWAA PERFUME STYLE HOUSE is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
+            : `Hi ${name}, your order #${order_number || id} at The Perfume Empire is confirmed! Track here: ${trackingUrl}${shippingNotesSms}`;
 
         await sendSMS({
             to: phone,
@@ -438,7 +438,7 @@ ${emailButton('Start Shopping', `${BRAND.url}/shop`)}
     if (phone) {
         await sendSMS({
             to: phone,
-            message: `Welcome ${firstName}! Thanks for joining TIWAA PERFUME STYLE HOUSE.`
+            message: `Welcome ${firstName}! Thanks for joining The Perfume Empire.`
         });
     }
 }

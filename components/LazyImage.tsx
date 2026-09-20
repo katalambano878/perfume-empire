@@ -47,22 +47,34 @@ export default function LazyImage({
     );
   }
 
+  const isStorageSrc = src.includes('/storage/v1/object/');
+
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ width, height }}>
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse z-10"></div>
       )}
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes={sizes}
-        className={`object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        onLoad={handleLoad}
-        onError={handleError}
-        priority={priority}
-        quality={75}
-      />
+      {isStorageSrc ? (
+        <img
+          src={src}
+          alt={alt}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={sizes}
+          className={`object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={handleLoad}
+          onError={handleError}
+          priority={priority}
+          quality={75}
+        />
+      )}
     </div>
   );
 }

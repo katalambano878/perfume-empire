@@ -15,7 +15,7 @@ When prompted:
 1. **Set up and deploy?** → **Y** (Enter)
 2. **Which scope?** → Choose your account/team
 3. **Link to existing project?** → **N** (this creates a new project)
-4. **What’s your project’s name?** → e.g. `department-store` (or any name you want)
+4. **What’s your project’s name?** → e.g. `perfume-empire` (or any name you want)
 
 The CLI will create the new project, deploy, and give you a preview URL.
 

@@ -11,7 +11,7 @@ export const viewport: Viewport = {
   themeColor: '#2563eb',
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tiwaperfumestyle.com';
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com';
 
 // Favicon: favicon folder assets in public; OG image: logo.png
 export const metadata: Metadata = {

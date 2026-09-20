@@ -8,7 +8,7 @@ export default function Footer() {
 
   const siteName = getSetting('site_name') || 'The Perfume Empire';
   const contactPhone = getSetting('contact_phone') || '0553967658';
-  const contactEmail = getSetting('contact_email') || 'tiwaperfumestyle@gmail.com';
+  const contactEmail = getSetting('contact_email') || 'hello@theperfumeempire.com';
   const contactAddress = getSetting('contact_address') || 'East Legon, near America House';
   const socialFacebook = getSetting('social_facebook') || '';
   const socialInstagram = getSetting('social_instagram') || '';

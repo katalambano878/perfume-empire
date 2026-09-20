@@ -4,29 +4,29 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function ProductEditor({ productId }: { productId: string }) {
-  const [productName, setProductName] = useState('Premium Leather Crossbody Bag');
-  const [category, setCategory] = useState('Bags & Accessories');
+  const [productName, setProductName] = useState('Oud Intense Eau de Parfum');
+  const [category, setCategory] = useState('Unisex');
   const [price, setPrice] = useState('289.00');
   const [comparePrice, setComparePrice] = useState('349.00');
-  const [sku, setSku] = useState('LCB-FG-001');
+  const [sku, setSku] = useState('TPE-OUD-001');
   const [stock, setStock] = useState('15');
   const [lowStockThreshold, setLowStockThreshold] = useState('5');
-  const [description, setDescription] = useState('Crafted from premium full-grain leather, this sophisticated crossbody bag combines timeless elegance with modern functionality. Features adjustable strap, secure zip closure, and multiple interior pockets.');
+  const [description, setDescription] = useState('A rich oud fragrance with warm amber and musk. Long-lasting eau de parfum for everyday wear or special occasions.');
   const [status, setStatus] = useState('Active');
   const [featured, setFeatured] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
 
   const variants = [
-    { id: 1, name: 'Forest Green', sku: 'LCB-FG-001', price: 289.00, stock: 15 },
-    { id: 2, name: 'Charcoal Black', sku: 'LCB-CB-002', price: 289.00, stock: 8 },
-    { id: 3, name: 'Cognac Brown', sku: 'LCB-CG-003', price: 299.00, stock: 12 }
+    { id: 1, name: '50ml', sku: 'TPE-OUD-050', price: 289.00, stock: 15 },
+    { id: 2, name: '100ml', sku: 'TPE-OUD-100', price: 389.00, stock: 8 },
+    { id: 3, name: '15ml travel', sku: 'TPE-OUD-015', price: 99.00, stock: 12 }
   ];
 
   const images = [
-    'https://readdy.ai/api/search-image?query=elegant%20premium%20leather%20crossbody%20bag%20in%20deep%20forest%20green%20color%20front%20view%20on%20clean%20white%20studio%20background&width=400&height=400&seq=editprod1&orientation=squarish',
-    'https://readdy.ai/api/search-image?query=elegant%20premium%20leather%20crossbody%20bag%20side%20detail%20view%20showing%20texture%20on%20white%20background&width=400&height=400&seq=editprod2&orientation=squarish',
-    'https://readdy.ai/api/search-image?query=elegant%20premium%20leather%20crossbody%20bag%20interior%20compartment%20view%20on%20white%20background&width=400&height=400&seq=editprod3&orientation=squarish',
-    'https://readdy.ai/api/search-image?query=elegant%20premium%20leather%20crossbody%20bag%20lifestyle%20shot%20with%20model%20on%20white%20background&width=400&height=400&seq=editprod4&orientation=squarish'
+    'https://readdy.ai/api/search-image?query=luxury%20oud%20perfume%20bottle%20on%20clean%20white%20studio%20background%20professional%20fragrance%20product%20photography&width=400&height=400&seq=editprod1&orientation=squarish',
+    'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottle%20cap%20detail%20on%20white%20background%20fragrance%20photography&width=400&height=400&seq=editprod2&orientation=squarish',
+    'https://readdy.ai/api/search-image?query=luxury%20perfume%20box%20and%20bottle%20on%20white%20background%20product%20photography&width=400&height=400&seq=editprod3&orientation=squarish',
+    'https://readdy.ai/api/search-image?query=perfume%20bottle%20lifestyle%20on%20marble%20surface%20soft%20lighting%20fragrance%20photography&width=400&height=400&seq=editprod4&orientation=squarish'
   ];
 
   const tabs = [
@@ -126,12 +126,12 @@ export default function ProductEditor({ productId }: { productId: string }) {
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-4 py-3 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                   >
-                    <option>Bags & Accessories</option>
-                    <option>Home Decor</option>
-                    <option>Textiles</option>
-                    <option>Lighting</option>
-                    <option>Wall Art</option>
-                    <option>Kitchen & Dining</option>
+                    <option>Men's</option>
+                    <option>Women's</option>
+                    <option>Unisex</option>
+                    <option>Perfume Oils</option>
+                    <option>Body Mists</option>
+                    <option>Gift Sets</option>
                   </select>
                 </div>
 
@@ -384,7 +384,7 @@ export default function ProductEditor({ productId }: { productId: string }) {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Premium Leather Crossbody Bag: Elegant & Functional"
+                  defaultValue="Oud Intense Eau de Parfum | The Perfume Empire"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <p className="text-sm text-gray-500 mt-2">60 characters recommended</p>
@@ -397,7 +397,7 @@ export default function ProductEditor({ productId }: { productId: string }) {
                 <textarea
                   rows={3}
                   maxLength={500}
-                  defaultValue="Quality product sourced and inspected for durability and style. Available for retail and wholesale orders."
+                  defaultValue="Shop Oud Intense Eau de Parfum at The Perfume Empire. Wholesale and retail in East Legon."
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
                 />
                 <p className="text-sm text-gray-500 mt-2">160 characters recommended</p>
@@ -409,11 +409,11 @@ export default function ProductEditor({ productId }: { productId: string }) {
                 </label>
                 <div className="flex items-center">
                   <span className="text-gray-600 bg-gray-100 px-4 py-3 border-2 border-r-0 border-gray-300 rounded-l-lg">
-                    tiwaperfumestyle.com/product/
+                    theperfumeempire.com/product/
                   </span>
                   <input
                     type="text"
-                    defaultValue="premium-leather-crossbody-bag"
+                    defaultValue="oud-intense-eau-de-parfum"
                     className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -425,7 +425,7 @@ export default function ProductEditor({ productId }: { productId: string }) {
                 </label>
                 <input
                   type="text"
-                  defaultValue="TIWAA PERFUME STYLE HOUSE, perfumes wholesale and retail, Satellite, Accra, Ghana"
+                  defaultValue="The Perfume Empire, perfumes wholesale and retail, East Legon, Accra, Ghana"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <p className="text-sm text-gray-500 mt-2">Separate keywords with commas</p>

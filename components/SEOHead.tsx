@@ -29,7 +29,7 @@ export function generateMetadata({
   author,
   noindex = false
 }: SEOProps): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tiwaperfumestyle.com';
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com';
   const defaultOgImage = `${siteUrl}/logo.png`;
   const resolvedOgImage = ogImage || defaultOgImage;
   const siteName = 'The Perfume Empire';
@@ -116,7 +116,7 @@ export function generateProductSchema(product: {
     sku: product.sku,
     brand: {
       '@type': 'Brand',
-      name: product.brand || 'PremiumShop'
+      name: product.brand || 'The Perfume Empire'
     },
     offers: {
       '@type': 'Offer',
@@ -161,17 +161,17 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
 }
 
 export function generateOrganizationSchema() {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tiwaperfumestyle.com';
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com';
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'TIWAA PERFUME STYLE HOUSE',
+    name: 'The Perfume Empire',
     url: siteUrl,
     logo: `${siteUrl}/logo.png`,
     image: `${siteUrl}/logo.png`,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+233545010949',
+      telephone: '+233553967658',
       contactType: 'Customer Service',
       areaServed: 'GH',
       availableLanguage: ['English']
@@ -180,11 +180,11 @@ export function generateOrganizationSchema() {
 }
 
 export function generateWebsiteSchema() {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tiwaperfumestyle.com';
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com';
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'TIWAA PERFUME STYLE HOUSE',
+    name: 'The Perfume Empire',
     url: siteUrl,
     potentialAction: {
       '@type': 'SearchAction',

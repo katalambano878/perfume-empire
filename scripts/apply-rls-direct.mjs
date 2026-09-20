@@ -1,12 +1,23 @@
 /**
+ * LEGACY — hosted Supabase only. Do not run after the plain-Postgres cutover.
+ *
  * Apply Row Level Security (RLS) policies directly to Supabase PostgreSQL.
- * Connects via Supabase's pooler using the service role JWT.
- * 
  * Run: node scripts/apply-rls-direct.mjs
  */
 
 import pg from 'pg';
 import fs from 'fs';
+
+const _plainGuard = fs.existsSync('.env.local') ? fs.readFileSync('.env.local', 'utf-8') : '';
+if (
+  process.env.NEXT_PUBLIC_USE_PLAIN_PG === 'true' ||
+  process.env.DATABASE_URL ||
+  /^DATABASE_URL=/m.test(_plainGuard) ||
+  /^NEXT_PUBLIC_USE_PLAIN_PG=true/m.test(_plainGuard)
+) {
+  console.error('Refusing to run: this script targets hosted Supabase. Use npm run db:migrate.');
+  process.exit(1);
+}
 
 // Read env
 const envContent = fs.readFileSync('.env.local', 'utf-8');

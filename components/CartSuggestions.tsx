@@ -15,33 +15,33 @@ export default function CartSuggestions() {
   const suggestedProducts: Product[] = [
     {
       id: '21',
-      name: 'Premium Wireless Headphones',
+      name: 'Oud Intense Eau de Parfum',
       price: 129.99,
       originalPrice: 179.99,
-      image: 'https://readdy.ai/api/search-image?query=Premium%20wireless%20over-ear%20headphones%20with%20black%20matte%20finish%20and%20cushioned%20ear%20cups%20displayed%20on%20a%20clean%20white%20studio%20background%20with%20soft%20lighting%20emphasizing%20the%20sleek%20modern%20design%20and%20premium%20quality%20materials%20perfect%20for%20ecommerce%20product%20photography&width=400&height=400&seq=cart-sugg-1&orientation=squarish',
+      image: 'https://readdy.ai/api/search-image?query=luxury%20oud%20perfume%20bottle%20on%20clean%20white%20studio%20background%20fragrance%20photography&width=400&height=400&seq=cart-sugg-1&orientation=squarish',
       rating: 4.8
     },
     {
       id: '22',
-      name: 'Leather Card Holder Wallet',
+      name: 'Vanilla Musk Body Spray',
       price: 34.99,
       originalPrice: 49.99,
-      image: 'https://readdy.ai/api/search-image?query=Elegant%20minimalist%20brown%20leather%20card%20holder%20wallet%20with%20multiple%20card%20slots%20displayed%20open%20on%20a%20clean%20white%20marble%20surface%20with%20soft%20natural%20lighting%20showcasing%20premium%20leather%20texture%20and%20craftsmanship%20perfect%20for%20ecommerce%20product%20photography&width=400&height=400&seq=cart-sugg-2&orientation=squarish',
+      image: 'https://readdy.ai/api/search-image?query=vanilla%20musk%20body%20spray%20on%20white%20marble%20fragrance%20photography&width=400&height=400&seq=cart-sugg-2&orientation=squarish',
       rating: 4.7
     },
     {
       id: '23',
-      name: 'Smart Watch Band',
+      name: 'Rose Absolute Perfume Oil',
       price: 24.99,
-      image: 'https://readdy.ai/api/search-image?query=Modern%20silicone%20smart%20watch%20band%20in%20sleek%20black%20color%20with%20metal%20clasp%20displayed%20on%20a%20clean%20white%20surface%20with%20soft%20studio%20lighting%20highlighting%20the%20texture%20and%20flexibility%20of%20the%20band%20perfect%20for%20ecommerce%20product%20photography&width=400&height=400&seq=cart-sugg-3&orientation=squarish',
+      image: 'https://readdy.ai/api/search-image?query=rose%20perfume%20oil%20roll%20on%20on%20white%20surface%20fragrance%20photography&width=400&height=400&seq=cart-sugg-3&orientation=squarish',
       rating: 4.6
     },
     {
       id: '24',
-      name: 'Phone Stand Holder',
+      name: 'Citrus Fresh Travel Spray',
       price: 19.99,
       originalPrice: 29.99,
-      image: 'https://readdy.ai/api/search-image?query=Modern%20minimalist%20aluminum%20phone%20stand%20holder%20in%20silver%20finish%20with%20adjustable%20angle%20displayed%20on%20a%20clean%20white%20desk%20surface%20with%20soft%20studio%20lighting%20emphasizing%20the%20sleek%20design%20and%20premium%20quality%20perfect%20for%20ecommerce%20product%20photography&width=400&height=400&seq=cart-sugg-4&orientation=squarish',
+      image: 'https://readdy.ai/api/search-image?query=small%20travel%20perfume%20spray%20on%20clean%20white%20desk%20fragrance%20photography&width=400&height=400&seq=cart-sugg-4&orientation=squarish',
       rating: 4.5
     }
   ];

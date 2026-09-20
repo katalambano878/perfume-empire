@@ -1,10 +1,10 @@
 # Fix 404 NOT_FOUND on Vercel homepage
 
-If you see **404: NOT_FOUND** when opening your deployment URL (e.g. `https://department-store-….vercel.app/`), Vercel is likely not building or serving the app as Next.js. Fix it as follows.
+If you see **404: NOT_FOUND** when opening your deployment URL (e.g. `https://perfume-empire-….vercel.app/`), Vercel is likely not building or serving the app as Next.js. Fix it as follows.
 
 ## 1. Set Framework and Build in the dashboard
 
-1. Open [Vercel Dashboard](https://vercel.com/dashboard) and select your project (**department-store**).
+1. Open [Vercel Dashboard](https://vercel.com/dashboard) and select your project (**perfume-empire**).
 2. Go to **Settings** → **General**.
 3. Set **Framework Preset** to **Next.js** (if it is "Other" or anything else, change it).
 4. Leave **Build Command** as default (`npm run build` or empty so it uses `package.json`).

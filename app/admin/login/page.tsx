@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { setAuthCookies } from '@/lib/auth-cookie';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -37,12 +36,9 @@ export default function AdminLoginPage() {
       if (error) throw error;
 
       if (data.session) {
-        // Set auth cookie so middleware can verify the session server-side
-        document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
-        document.cookie = `sb-refresh-token=${data.session.refresh_token}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax; Secure`;
-
-        router.push('/admin');
-        router.refresh();
+        // Omit Secure on HTTP (localhost) so middleware actually receives the cookie.
+        setAuthCookies(data.session.access_token, data.session.refresh_token);
+        window.location.href = '/admin';
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');

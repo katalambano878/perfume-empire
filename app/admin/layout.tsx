@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookie';
 
 export default function AdminLayout({
   children,
@@ -37,7 +38,7 @@ export default function AdminLayout({
       }
 
       // Ensure auth cookie is set (in case user already had a session from before)
-      document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+      setAuthCookies(session.access_token);
 
       // Check user role from profiles table
       const { data: profile, error: profileError } = await supabase
@@ -55,7 +56,7 @@ export default function AdminLayout({
       // Only allow admin and staff roles
       if (profile.role !== 'admin' && profile.role !== 'staff') {
         console.warn('User does not have admin/staff role');
-        document.cookie = 'sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure';
+        clearAuthCookies();
         await supabase.auth.signOut();
         router.push('/admin/login?error=unauthorized');
         return;
@@ -72,11 +73,10 @@ export default function AdminLayout({
     // Keep cookie in sync when session refreshes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'TOKEN_REFRESHED' && session) {
-        document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+        setAuthCookies(session.access_token);
       }
       if (event === 'SIGNED_OUT') {
-        document.cookie = 'sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure';
-        document.cookie = 'sb-refresh-token=; path=/; max-age=0; SameSite=Lax; Secure';
+        clearAuthCookies();
       }
     });
 
@@ -133,8 +133,7 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     // Clear auth cookies set during login
-    document.cookie = 'sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure';
-    document.cookie = 'sb-refresh-token=; path=/; max-age=0; SameSite=Lax; Secure';
+    clearAuthCookies();
     await supabase.auth.signOut();
     router.push('/admin/login');
   };

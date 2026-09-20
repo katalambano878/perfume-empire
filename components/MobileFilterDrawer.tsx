@@ -14,8 +14,8 @@ export default function MobileFilterDrawer({ isOpen, onClose }: MobileFilterDraw
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
-  const categories = ['Dresses', 'Tops', 'Bottoms', 'Shoes', 'Bags', 'Accessories'];
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const categories = ['Men\'s', 'Women\'s', 'Unisex', 'Perfume Oils', 'Body Mists', 'Gift Sets'];
+  const sizes = ['15ml', '30ml', '50ml', '100ml'];
   const colors = [
     { name: 'Black', hex: '#000000' },
     { name: 'White', hex: '#FFFFFF' },

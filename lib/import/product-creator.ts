@@ -38,7 +38,7 @@ function slugify(name: string): string {
 function generateSku(): string {
   const timestamp = Date.now().toString(36).toUpperCase().slice(-4);
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `SLI-${timestamp}-${random}`;
+  return `TPE-${timestamp}-${random}`;
 }
 
 async function ensureUniqueSlug(baseSlug: string): Promise<string> {

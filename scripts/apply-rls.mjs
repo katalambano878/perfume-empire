@@ -1,11 +1,24 @@
 /**
+ * LEGACY — hosted Supabase only. Do not run after the plain-Postgres cutover.
+ * Use schema_plain.sql / `npm run db:migrate` instead.
+ *
  * Apply Row Level Security (RLS) policies to all Supabase tables.
  * Run with: node scripts/apply-rls.mjs
- * 
- * Uses the Supabase Management API via the service role key.
  */
 
+import { existsSync, readFileSync } from 'fs';
 import { createClient } from '@supabase/supabase-js';
+
+const _plainGuard = existsSync('.env.local') ? readFileSync('.env.local', 'utf-8') : '';
+if (
+  process.env.NEXT_PUBLIC_USE_PLAIN_PG === 'true' ||
+  process.env.DATABASE_URL ||
+  /^DATABASE_URL=/m.test(_plainGuard) ||
+  /^NEXT_PUBLIC_USE_PLAIN_PG=true/m.test(_plainGuard)
+) {
+  console.error('Refusing to run: this script targets hosted Supabase. Use npm run db:migrate.');
+  process.exit(1);
+}
 
 const SUPABASE_URL = 'https://bskojprmfxugvkycvetc.supabase.co';
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;

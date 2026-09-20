@@ -88,10 +88,10 @@ export default function ContactPage() {
   };
 
   // Get contact details from CMS settings
-  const contactEmail = getSetting('contact_email') || 'tiwaperfumestyle@gmail.com';
-  const contactPhone = getSetting('contact_phone') || '0545010949';
-  const contactWhatsapp = getSetting('contact_whatsapp') || '0554169992';
-  const contactAddress = getSetting('contact_address') || 'Satellite, Accra';
+  const contactEmail = getSetting('contact_email') || 'hello@theperfumeempire.com';
+  const contactPhone = getSetting('contact_phone') || '0553967658';
+  const contactWhatsapp = getSetting('contact_whatsapp') || '0553967658';
+  const contactAddress = getSetting('contact_address') || 'East Legon, near America House';
 
   const heroTitle = pageContent?.title || 'Get In Touch';
   const heroSubtitle = pageContent?.subtitle || 'Have a question or need assistance?';
@@ -129,7 +129,7 @@ export default function ContactPage() {
       title: 'Visit Us',
       value: contactAddress,
       link: 'https://maps.google.com',
-      description: 'Satellite, Accra'
+      description: 'East Legon, near America House'
     }
   ];
 
@@ -152,7 +152,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
       <PageHero
         title="Get In Touch"
-        subtitle="Have a question or need assistance? We're here to help from Satellite, Accra."
+        subtitle="Have a question or need assistance? We're here to help from East Legon, near America House."
         backgroundImage="/Whisk_835b10a10eab0caa2c7419d4a6e01102dr.jpeg"
       />
 

@@ -14,7 +14,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
 
   const posts: any = {
     '1': {
-      title: 'The Ultimate Guide to Online Shopping in Ghana',
+      title: 'How to Shop Fragrances Online in Ghana',
       image: 'https://readdy.ai/api/search-image?query=Modern%20African%20woman%20shopping%20online%20on%20laptop%20in%20bright%20contemporary%20home%20office%20coffee%20cup%20plants%20natural%20light%20relaxed%20lifestyle%20photography%20minimal%20clean%20background&width=1200&height=600&seq=blogpost1&orientation=landscape',
       category: 'Shopping Tips',
       date: 'December 15, 2024',
@@ -94,53 +94,51 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
       `
     },
     '2': {
-      title: '10 Must-Have Products for Your Home This Season',
-      image: 'https://readdy.ai/api/search-image?query=Beautiful%20modern%20African%20home%20interior%20with%20stylish%20furniture%20decor%20items%20plants%20bright%20natural%20lighting%20contemporary%20design%20magazine%20quality%20photography&width=1200&height=600&seq=blogpost2&orientation=landscape',
-      category: 'Home & Living',
+      title: '10 Must-Have Fragrances This Season',
+      image: 'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottles%20on%20marble%20seasonal%20fragrance%20collection%20editorial%20photography&width=1200&height=600&seq=blogpost2&orientation=landscape',
+      category: 'Fragrance Tips',
       date: 'December 12, 2024',
       readTime: '6 min read',
-      author: 'Yaw Darko',
+      author: 'The Perfume Empire',
       content: `
-        <p>Transform your living space with these carefully selected must-have products. Whether you're refreshing your décor or starting from scratch, these items will elevate your home's comfort and style.</p>
+        <p>Refresh your collection with these carefully selected must-have fragrances. Whether you are buying for yourself or stocking a shop, these scent families cover everyday wear and special occasions.</p>
 
-        <h2>1. Smart LED Lighting</h2>
-        <p>Modern LED bulbs with adjustable brightness and colour temperature can dramatically change your home's ambience. Control them from your phone, set schedules, and reduce energy costs.</p>
+        <h2>1. A signature oud</h2>
+        <p>Rich, warm, and long-lasting. Oud is a favourite for evening wear and a strong wholesale seller in Accra.</p>
 
-        <h2>2. Premium Bedding Set</h2>
-        <p>Invest in quality sheets, duvet covers, and pillows. Good sleep is essential, and premium bedding makes a noticeable difference. Look for breathable fabrics suitable for Ghana's climate.</p>
+        <h2>2. A clean citrus</h2>
+        <p>Bright and fresh for daytime. Easy to gift and easy to wear in Ghana's heat.</p>
 
-        <h2>3. Air Purifier</h2>
-        <p>With increasing air quality concerns, an air purifier removes dust, pollen, and pollutants, creating a healthier indoor environment for your family.</p>
+        <h2>3. A soft vanilla or musk</h2>
+        <p>Comforting and versatile. Works as a daily scent or a layer under a stronger perfume.</p>
 
-        <h2>4. Organisational Storage Solutions</h2>
-        <p>Declutter your space with stylish storage boxes, baskets, and shelving units. A well-organised home feels more spacious and serene.</p>
+        <h2>4. A rose or floral oil</h2>
+        <p>Oils last well on skin and travel easily. A small bottle goes a long way.</p>
 
-        <h2>5. Indoor Plants</h2>
-        <p>Bring nature indoors with low-maintenance plants like snake plants or pothos. They purify air, add visual interest, and create a calming atmosphere.</p>
+        <h2>5. An amber evening scent</h2>
+        <p>Warm and sweet without being heavy. Good for dinners, church, and celebrations.</p>
 
-        <h2>6. Quality Cookware Set</h2>
-        <p>Upgrade your kitchen with durable pots and pans. Quality cookware distributes heat evenly, lasts longer, and makes cooking more enjoyable.</p>
+        <h2>6. A fresh aquatic for men</h2>
+        <p>Clean, soapy, and office-friendly. A reliable first bottle for new customers.</p>
 
-        <h2>7. Comfortable Throw Pillows</h2>
-        <p>Instantly refresh your living room or bedroom with decorative throw pillows. Mix textures and colours to create visual interest.</p>
+        <h2>7. A unisex woody scent</h2>
+        <p>Sandalwood and cedar notes work for men and women. Easy to recommend in store.</p>
 
-        <h2>8. Smart Power Strip</h2>
-        <p>Protect your electronics and reduce energy waste with a smart power strip that cuts power to devices in standby mode.</p>
+        <h2>8. A travel spray</h2>
+        <p>15ml or 30ml bottles are perfect for bags, cars, and first-time testers.</p>
 
-        <h2>9. Bath Towel Set</h2>
-        <p>Luxury doesn't have to be expensive. A set of soft, absorbent towels in coordinating colours makes your bathroom feel like a spa.</p>
+        <h2>9. A body mist for layering</h2>
+        <p>Lighter than eau de parfum. Use after a shower or to refresh during the day.</p>
 
-        <h2>10. Decorative Mirror</h2>
-        <p>Mirrors make spaces feel larger and brighter by reflecting light. Choose a statement piece that complements your décor style.</p>
+        <h2>10. A gift set</h2>
+        <p>Two or three complementary bottles make birthdays and holidays simple.</p>
 
-        <h2>Shopping Smart</h2>
-        <p>When purchasing home products, consider quality over quantity. It's better to invest in a few well-made items than many cheap ones that won't last. Read reviews, compare prices, and take advantage of seasonal sales.</p>
-
-        <p>Start with the essentials and gradually build your collection. Your home should reflect your personality and meet your practical needs.</p>
+        <h2>Shopping smart</h2>
+        <p>Start with one or two bottles you know you will wear, then add oils and travel sizes. Visit The Perfume Empire in East Legon, near America House, to smell before you buy — or shop wholesale if you are stocking a stall.</p>
       `
     },
     '3': {
-      title: 'How to Choose Quality Products: A Buyer\'s Guide',
+      title: 'How to Choose Quality Perfume: A Buyer\'s Guide',
       image: 'https://readdy.ai/api/search-image?query=Person%20examining%20product%20quality%20checking%20labels%20and%20details%20in%20bright%20retail%20setting%20closeup%20hands%20inspecting%20merchandise%20professional%20photography%20clean%20background&width=1200&height=600&seq=blogpost3&orientation=landscape',
       category: 'Buying Guide',
       date: 'December 10, 2024',
@@ -206,28 +204,28 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
 
         <h2>Category-Specific Tips</h2>
 
-        <h3>Electronics</h3>
+        <h3>Eau de Parfum and Eau de Toilette</h3>
         <ul>
-          <li>Check for official warranty from manufacturer</li>
-          <li>Verify authenticity through serial numbers</li>
-          <li>Compare specifications carefully</li>
-          <li>Research common issues with the model</li>
+          <li>Check concentration and stated longevity</li>
+          <li>Confirm the bottle is sealed and authentic</li>
+          <li>Compare notes and size before you buy</li>
+          <li>Ask about storage so the scent stays true</li>
         </ul>
 
-        <h3>Clothing and Textiles</h3>
+        <h3>Perfume Oils</h3>
         <ul>
-          <li>Natural fibres often last longer</li>
-          <li>Check fabric weight (heavier usually means quality)</li>
-          <li>Examine stitching and seams</li>
-          <li>Verify colour fastness information</li>
+          <li>Oil-based scents often last longer on skin</li>
+          <li>A little goes a long way — start with a small size</li>
+          <li>Check for a clean roll-on or dropper seal</li>
+          <li>Store away from heat and direct sun</li>
         </ul>
 
-        <h3>Furniture</h3>
+        <h3>Gift Sets</h3>
         <ul>
-          <li>Solid wood beats particle board</li>
-          <li>Test weight capacity</li>
-          <li>Check joinery methods</li>
-          <li>Assess cushion density and spring quality</li>
+          <li>Confirm every item in the set is listed</li>
+          <li>Check expiry or batch information where shown</li>
+          <li>Ask about exchange if a scent does not suit the recipient</li>
+          <li>Look for intact packaging if it is a gift</li>
         </ul>
 
         <h2>Making the Final Decision</h2>
@@ -264,15 +262,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
   const relatedPosts = [
     {
       id: id === '1' ? '2' : '1',
-      title: id === '1' ? '10 Must-Have Products for Your Home This Season' : 'The Ultimate Guide to Online Shopping in Ghana',
+      title: id === '1' ? '10 Must-Have Fragrances This Season' : 'How to Shop Fragrances Online in Ghana',
       image: id === '1' ?
-        'https://readdy.ai/api/search-image?query=Beautiful%20modern%20African%20home%20interior%20with%20stylish%20furniture%20decor%20items%20plants%20bright%20natural%20lighting%20contemporary%20design%20magazine%20quality%20photography&width=600&height=400&seq=related1&orientation=landscape' :
+        'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottles%20on%20marble%20seasonal%20fragrance%20collection%20editorial%20photography&width=600&height=400&seq=related1&orientation=landscape' :
         'https://readdy.ai/api/search-image?query=Modern%20African%20woman%20shopping%20online%20on%20laptop%20in%20bright%20contemporary%20home%20office%20coffee%20cup%20plants%20natural%20light%20relaxed%20lifestyle%20photography%20minimal%20clean%20background&width=600&height=400&seq=related2&orientation=landscape',
-      category: id === '1' ? 'Home & Living' : 'Shopping Tips'
+      category: id === '1' ? 'Fragrance Tips' : 'Shopping Tips'
     },
     {
       id: id === '3' ? '1' : '3',
-      title: id === '3' ? 'The Ultimate Guide to Online Shopping in Ghana' : 'How to Choose Quality Products: A Buyer\'s Guide',
+      title: id === '3' ? 'How to Shop Fragrances Online in Ghana' : 'How to Choose Quality Perfume: A Buyer\'s Guide',
       image: id === '3' ?
         'https://readdy.ai/api/search-image?query=Modern%20African%20woman%20shopping%20online%20on%20laptop%20in%20bright%20contemporary%20home%20office%20coffee%20cup%20plants%20natural%20light%20relaxed%20lifestyle%20photography%20minimal%20clean%20background&width=600&height=400&seq=related3&orientation=landscape' :
         'https://readdy.ai/api/search-image?query=Person%20examining%20product%20quality%20checking%20labels%20and%20details%20in%20bright%20retail%20setting%20closeup%20hands%20inspecting%20merchandise%20professional%20photography%20clean%20background&width=600&height=400&seq=related4&orientation=landscape',

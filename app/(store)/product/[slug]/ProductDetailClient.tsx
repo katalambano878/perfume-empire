@@ -264,10 +264,10 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: 'https://tiwaperfumestyle.com' },
-    { name: 'Shop', url: 'https://tiwaperfumestyle.com/shop' },
-    { name: product.category, url: `https://tiwaperfumestyle.com/shop?category=${product.category.toLowerCase().replace(/\s+/g, '-')}` },
-    { name: product.name, url: `https://tiwaperfumestyle.com/product/${slug}` }
+    { name: 'Home', url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com'}` },
+    { name: 'Shop', url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com'}/shop` },
+    { name: product.category, url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com'}/shop?category=${product.category.toLowerCase().replace(/\s+/g, '-')}` },
+    { name: product.name, url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com'}/product/${slug}` }
   ]);
 
   return (

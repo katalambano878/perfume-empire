@@ -23,45 +23,45 @@ export default function AdvancedSearch() {
   const allProducts: SearchSuggestion[] = [
     {
       id: '1',
-      name: 'Premium Wireless Headphones',
-      category: 'Electronics',
+      name: 'Oud Intense Eau de Parfum',
+      category: 'Unisex',
       price: 450,
-      image: 'https://readdy.ai/api/search-image?query=premium%20wireless%20headphones%20with%20sleek%20black%20design%20and%20cushioned%20ear%20cups%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20high%20quality&width=200&height=200&seq=search1&orientation=squarish'
+      image: 'https://readdy.ai/api/search-image?query=luxury%20oud%20perfume%20bottle%20on%20clean%20white%20background%20professional%20fragrance%20photography&width=200&height=200&seq=search1&orientation=squarish'
     },
     {
       id: '2',
-      name: 'Smart Fitness Watch',
-      category: 'Wearables',
-      price: 320,
-      image: 'https://readdy.ai/api/search-image?query=modern%20smart%20fitness%20watch%20with%20black%20band%20and%20digital%20display%20showing%20health%20metrics%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style&width=200&height=200&seq=search2&orientation=squarish'
+      name: 'Vanilla Musk Body Spray',
+      category: 'Women\'s',
+      price: 120,
+      image: 'https://readdy.ai/api/search-image?query=vanilla%20musk%20body%20spray%20bottle%20on%20clean%20white%20background%20fragrance%20photography&width=200&height=200&seq=search2&orientation=squarish'
     },
     {
       id: '3',
-      name: 'Leather Crossbody Bag',
-      category: 'Fashion',
-      price: 289,
-      image: 'https://readdy.ai/api/search-image?query=elegant%20premium%20leather%20crossbody%20bag%20in%20forest%20green%20color%20on%20clean%20white%20background%20professional%20product%20photography%20luxury%20style%20high%20quality&width=200&height=200&seq=search3&orientation=squarish'
+      name: 'Citrus Fresh Eau de Toilette',
+      category: 'Men\'s',
+      price: 189,
+      image: 'https://readdy.ai/api/search-image?query=citrus%20fresh%20perfume%20bottle%20on%20clean%20white%20background%20fragrance%20photography&width=200&height=200&seq=search3&orientation=squarish'
     },
     {
       id: '4',
-      name: 'Minimalist Ceramic Vase Set',
-      category: 'Home Decor',
+      name: 'Rose Absolute Perfume Oil',
+      category: 'Perfume Oils',
       price: 159,
-      image: 'https://readdy.ai/api/search-image?query=modern%20minimalist%20ceramic%20vase%20set%20in%20cream%20and%20charcoal%20colors%20on%20white%20background%20elegant%20home%20decor%20professional%20photography%20clean%20lines&width=200&height=200&seq=search4&orientation=squarish'
+      image: 'https://readdy.ai/api/search-image?query=rose%20perfume%20oil%20roll%20on%20on%20white%20background%20fragrance%20photography&width=200&height=200&seq=search4&orientation=squarish'
     },
     {
       id: '5',
-      name: 'Organic Cotton T-Shirt',
-      category: 'Clothing',
-      price: 45,
-      image: 'https://readdy.ai/api/search-image?query=premium%20organic%20cotton%20t-shirt%20in%20white%20color%20on%20clean%20background%20professional%20clothing%20photography%20minimalist%20style%20high%20quality%20fabric&width=200&height=200&seq=search5&orientation=squarish'
+      name: 'Amber Night Eau de Parfum',
+      category: 'Unisex',
+      price: 245,
+      image: 'https://readdy.ai/api/search-image?query=amber%20perfume%20bottle%20on%20clean%20white%20background%20luxury%20fragrance%20photography&width=200&height=200&seq=search5&orientation=squarish'
     },
     {
       id: '6',
-      name: 'Bamboo Desk Organizer',
-      category: 'Office',
-      price: 68,
-      image: 'https://readdy.ai/api/search-image?query=modern%20bamboo%20desk%20organizer%20with%20multiple%20compartments%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20office%20style%20high%20quality&width=200&height=200&seq=search6&orientation=squarish'
+      name: 'Gift Set Trio',
+      category: 'Gift Sets',
+      price: 368,
+      image: 'https://readdy.ai/api/search-image?query=perfume%20gift%20set%20three%20bottles%20on%20clean%20white%20background%20fragrance%20photography&width=200&height=200&seq=search6&orientation=squarish'
     }
   ];
 
@@ -251,7 +251,7 @@ export default function AdvancedSearch() {
             <div className="p-6">
               <p className="text-xs font-semibold text-gray-500 mb-3">Popular Searches</p>
               <div className="flex flex-wrap gap-2">
-                {['Headphones', 'Watch', 'Bag', 'Vase', 'T-Shirt', 'Organizer'].map((tag) => (
+                {['Oud', 'Vanilla', 'Citrus', 'Rose', 'Amber', 'Gift Set'].map((tag) => (
                   <button
                     key={tag}
                     onClick={() => {
