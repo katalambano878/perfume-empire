@@ -17,7 +17,7 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tiwaperfumestyle.com
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "The Perfume Empire | Premium Fragrances — East Legon",
+    default: "The Perfume Empire | Premium Fragrances, East Legon",
     template: "%s | The Perfume Empire"
   },
   description: "Premium fragrances at East Legon, near America House. Wholesale & retail. 055 396 7658. Instagram @Theperfumempire · TikTok @Theperfume_empire.",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GH",
     url: siteUrl,
-    title: "The Perfume Empire | Premium Fragrances — East Legon",
+    title: "The Perfume Empire | Premium Fragrances, East Legon",
     description: "Premium fragrances at East Legon, near America House. Wholesale & retail. 055 396 7658.",
     siteName: "The Perfume Empire",
     images: [
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "The Perfume Empire — Premium Fragrances",
+        alt: "The Perfume Empire Premium Fragrances",
         type: "image/png",
       },
     ],

@@ -39,7 +39,7 @@ export default function Home() {
     banners?: Array<{ text: string; active: boolean }>;
   } = {
     hero: {
-      headline: 'The Perfume Empire — Premium Fragrances',
+      headline: 'The Perfume Empire',
       subheadline: 'Curated fragrances at East Legon, near America House. Wholesale & retail for resellers and customers across Ghana.',
       primaryButtonText: 'Shop Collections',
       primaryButtonLink: '/shop',
@@ -48,7 +48,7 @@ export default function Home() {
     },
     banners: [
       { text: '🚚 Free delivery on orders over GH₵ 500 within Accra!', active: false },
-      { text: '✨ New stock arriving this weekend - Pre-order now!', active: false },
+      { text: '✨ New stock arriving this weekend. Pre-order now!', active: false },
       { text: '💳 Secure payments via Mobile Money & Card', active: false }
     ]
   };
@@ -112,8 +112,8 @@ export default function Home() {
     <main className="flex-col items-center justify-between min-h-screen">
       {renderBanners()}
 
-      {/* Hero Section - God Level Design */}
-      <section className="relative w-full h-[85vh] md:h-[95vh] overflow-hidden bg-black">
+      {/* Hero Section - Sleek Interactive Design */}
+      <section className="relative w-full h-[85vh] md:h-[95vh] overflow-hidden bg-neutral-900 rounded-b-[2.5rem] md:rounded-b-[4rem] shadow-2xl">
 
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 right-0 z-30 h-1 bg-white/10">
@@ -234,36 +234,46 @@ export default function Home() {
         {/* Decoration */}
         <div className="absolute bottom-10 right-6 md:right-16 z-20 hidden md:block">
           <div className="text-white/40 text-sm font-light tracking-widest vertical-text transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
-            EST. 2026 — COLLECTION
+            EST. 2026 COLLECTION
           </div>
         </div>
 
       </section>
 
-      {/* Categories Section - God Level Redesign */}
-      <section className="py-20 md:py-32 bg-white relative overflow-hidden">
-        {/* Decorative Background Element */}
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+      {/* Categories Section */}
+      <section className="py-12 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <AnimatedSection className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-            <div className="relative">
-              <span className="block text-sm font-medium tracking-[0.2em] text-gray-500 mb-3 uppercase">Olfactory Families</span>
-              <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-gray-900 leading-[1.1]">
+        <div className="max-w-[1400px] mx-auto">
+          <AnimatedSection className="flex items-end justify-between mb-6 md:mb-16 gap-4 px-4 sm:px-6">
+            <div>
+              <span className="block text-[11px] md:text-sm font-medium tracking-[0.2em] text-gray-500 mb-2 md:mb-3 uppercase">
+                Olfactory Families
+              </span>
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl text-gray-900 leading-[1.1]">
                 Shop by <span className="italic text-gray-400">Category</span>
               </h2>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 shrink-0">
               <p className="hidden md:block text-gray-500 max-w-xs text-right font-light leading-relaxed">
                 Explore our curated collection of fragrances, categorized by their dominant notes.
               </p>
-              <Link href="/categories" className="group flex items-center justify-center w-14 h-14 rounded-full border border-gray-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300">
-                <i className="ri-arrow-right-line text-xl transition-transform group-hover:translate-x-1"></i>
+              <Link
+                href="/categories"
+                className="group flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-full border border-gray-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300"
+                aria-label="View all categories"
+              >
+                <i className="ri-arrow-right-line text-lg md:text-xl transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </AnimatedSection>
 
-          <AnimatedGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {/* Mobile: horizontal snap carousel · Desktop: grid */}
+          <div
+            className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 px-4 sm:px-6
+                       [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+                       md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-8 md:overflow-visible md:pb-0 md:snap-none"
+          >
             {[
               {
                 id: 'mens',
@@ -271,7 +281,7 @@ export default function Home() {
                 subtitle: 'Bold, confident, timeless',
                 slug: 'mens',
                 image: '/Whisk_4e28dc6bf0d6be98458435c0c2950e3ddr.jpeg',
-                tint: 'bg-blue-900'
+                tint: 'bg-blue-900',
               },
               {
                 id: 'womens',
@@ -279,7 +289,7 @@ export default function Home() {
                 subtitle: 'Romantic, soft, elegant',
                 slug: 'womens',
                 image: '/Whisk_50c2f050b440b4b95064c372c1ec7ee1dr.jpeg',
-                tint: 'bg-rose-900'
+                tint: 'bg-rose-900',
               },
               {
                 id: 'unisex',
@@ -287,7 +297,7 @@ export default function Home() {
                 subtitle: 'For everyone, every mood',
                 slug: 'unisex',
                 image: '/Whisk_64e2698834d1476801a4b505b30c324bdr.jpeg',
-                tint: 'bg-amber-900'
+                tint: 'bg-amber-900',
               },
               {
                 id: 'oud',
@@ -295,7 +305,7 @@ export default function Home() {
                 subtitle: 'Rich, opulent, lasting',
                 slug: 'oud',
                 image: '/Whisk_6ec7df94ec3ca85b49644810b7fab2ecdr.jpeg',
-                tint: 'bg-stone-900'
+                tint: 'bg-stone-900',
               },
               {
                 id: 'gift-sets',
@@ -303,7 +313,7 @@ export default function Home() {
                 subtitle: 'Curated for gifting',
                 slug: 'gift-sets',
                 image: '/Whisk_6f28ce8873000718f834bc0d63e3bc87dr.jpeg',
-                tint: 'bg-rose-900'
+                tint: 'bg-rose-900',
               },
               {
                 id: 'new-arrivals',
@@ -311,74 +321,56 @@ export default function Home() {
                 subtitle: 'Just landed',
                 slug: 'new-arrivals',
                 image: '/Whisk_835b10a10eab0caa2c7419d4a6e01102dr.jpeg',
-                tint: 'bg-blue-900'
-              }
+                tint: 'bg-blue-900',
+              },
             ].map((category) => (
-              <Link href={`/shop?category=${category.slug}`} key={category.id} className="group block h-full w-full">
-                <div className="relative aspect-[3/4] overflow-hidden isolate bg-gray-900 shadow-2xl rounded-3xl">
-
-                  {/* Image: Cinematic Slow Zoom & Brightness Shift */}
+              <Link
+                href={`/shop?category=${category.slug}`}
+                key={category.id}
+                className="group block shrink-0 w-[72vw] max-w-[280px] snap-center
+                           sm:w-[58vw] sm:max-w-[320px]
+                           md:w-auto md:max-w-none md:shrink"
+              >
+                <div className="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden isolate bg-gray-900 shadow-xl md:shadow-2xl rounded-2xl md:rounded-3xl">
                   <div className="absolute inset-0 transition-transform duration-[1500ms] ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100">
                     <Image
                       src={category.image}
                       alt={category.name}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      sizes="(max-width: 768px) 72vw, (max-width: 1200px) 50vw, 25vw"
                     />
                   </div>
 
-                  {/* Cinematic Grading Overlays */}
-                  {/* 1. Base Darkening Gradient (Bottom Up) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-700 group-hover:opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent opacity-85" />
+                  <div className={`absolute inset-0 ${category.tint} mix-blend-overlay opacity-40 group-hover:opacity-50 transition-opacity duration-700`} />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-transparent opacity-60" />
 
-                  {/* 2. Color Tint Overlay (Mix Blend) */}
-                  <div className={`absolute inset-0 ${category.tint} mix-blend-overlay opacity-40 transition-opacity duration-700 group-hover:opacity-50`}></div>
-
-                  {/* 3. Top Down Vignette for depth */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent opacity-60"></div>
-
-                  {/* Content Container */}
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end z-10">
-
-                    {/* Floating 'Explore' Tag - Reveals on Hover */}
-                    <div className="absolute top-8 right-8 overflow-hidden">
-                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-[10px] font-bold text-white tracking-widest uppercase transform translate-y-[-150%] opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                        Explore <i className="ri-arrow-right-line"></i>
+                  <div className="absolute inset-0 p-5 md:p-8 flex flex-col justify-end z-10">
+                    <div className="absolute top-5 right-5 md:top-8 md:right-8 overflow-hidden">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full bg-white/15 border border-white/25 backdrop-blur-md text-[9px] md:text-[10px] font-bold text-white tracking-widest uppercase md:translate-y-[-150%] md:opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                        Explore <i className="ri-arrow-right-line" />
                       </span>
                     </div>
 
-                    {/* Category Title */}
-                    <div className="overflow-hidden">
-                      <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white leading-[0.9] mb-3 transform transition-transform duration-700 ease-out group-hover:-translate-y-2 drop-shadow-xl">
-                        {category.name}
-                      </h3>
-                    </div>
+                    <h3 className="font-serif text-2xl md:text-4xl lg:text-5xl text-white leading-[0.95] mb-2 md:mb-3 drop-shadow-xl transition-transform duration-700 group-hover:-translate-y-1">
+                      {category.name}
+                    </h3>
 
-                    {/* Decorative Line */}
-                    <div className="h-[1px] w-12 bg-white/60 mb-4 transition-all duration-700 ease-out group-hover:w-full group-hover:bg-white/90"></div>
+                    <div className="h-px w-10 md:w-12 bg-white/60 mb-2.5 md:mb-4 transition-all duration-700 group-hover:w-full group-hover:bg-white/90" />
 
-                    {/* Subtitle / Description */}
-                    <div className="overflow-hidden">
-                      <p className="text-white/80 font-light text-sm tracking-widest uppercase transform translate-y-full opacity-0 transition-all duration-700 ease-out group-hover:translate-y-0 group-hover:opacity-100 delay-100">
-                        {category.subtitle}
-                      </p>
-                    </div>
+                    <p className="text-white/75 font-light text-[11px] md:text-sm tracking-[0.15em] uppercase md:translate-y-full md:opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100">
+                      {category.subtitle}
+                    </p>
                   </div>
-
-                  {/* Premium Border Frame Effect */}
-                  <div className="absolute inset-5 border border-white/20 scale-[0.95] opacity-0 transition-all duration-700 ease-out group-hover:scale-100 group-hover:opacity-100 pointer-events-none z-20">
-                    {/* Corner Accents */}
-                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/60"></div>
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/60"></div>
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/60"></div>
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/60"></div>
-                  </div>
-
                 </div>
               </Link>
             ))}
-          </AnimatedGrid>
+          </div>
+
+          <p className="md:hidden text-center text-[11px] text-gray-400 tracking-wide mt-1 px-4">
+            Swipe to browse <i className="ri-arrow-right-s-line align-middle" />
+          </p>
         </div>
       </section>
 
@@ -461,10 +453,10 @@ export default function Home() {
           <AnimatedSection>
             <span className="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase">Our Philosophy</span>
             <h2 className="font-serif text-3xl sm:text-4xl text-gray-900 mt-3 mb-6 leading-tight">
-              More than a scent — an <span className="italic text-gray-500">experience</span>
+              More than a scent, an <span className="italic text-gray-500">experience</span>
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-              The Perfume Empire is built on a belief that fragrance should feel personal and premium. From East Legon, we bring you a curated selection of authentic perfumes for every moment — wholesale and retail.
+              The Perfume Empire is built on a belief that fragrance should feel personal and premium. From East Legon, we bring you a curated selection of authentic perfumes for every moment, wholesale and retail.
             </p>
             <Link href="/about" className="inline-block mt-8 text-gray-900 font-medium border-b border-gray-900 pb-1 hover:opacity-70 transition-opacity">
               Read our story

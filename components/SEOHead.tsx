@@ -16,7 +16,7 @@ interface SEOProps {
 }
 
 export function generateMetadata({
-  title = 'The Perfume Empire — Premium Fragrances',
+  title = 'The Perfume Empire | Premium Fragrances',
   description = 'Premium fragrances at East Legon, near America House. Wholesale & retail. 055 396 7658.',
   keywords = [],
   ogImage,

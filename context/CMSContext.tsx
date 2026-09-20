@@ -68,7 +68,7 @@ interface CMSContextType {
 
 const defaultSettings: SiteSettings = {
     site_name: 'The Perfume Empire',
-    site_tagline: 'Premium fragrances — East Legon. Wholesale & retail.',
+    site_tagline: 'Premium fragrances in East Legon. Wholesale & retail.',
     site_logo: '/logo.png',
     contact_email: 'tiwaperfumestyle@gmail.com',
     contact_phone: '0553967658',
@@ -100,7 +100,7 @@ const CMSContext = createContext<CMSContextType>({
 export function CMSProvider({ children }: { children: ReactNode }) {
     const [settings, setSettings] = useState<SiteSettings>({
         site_name: 'The Perfume Empire',
-        site_tagline: 'Premium fragrances — East Legon. Wholesale & retail.',
+        site_tagline: 'Premium fragrances in East Legon. Wholesale & retail.',
         site_logo: '/logo.png',
         contact_email: 'tiwaperfumestyle@gmail.com',
         contact_phone: '0553967658',

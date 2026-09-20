@@ -95,7 +95,7 @@ export default function FAQsPage() {
     {
       category: 'payment',
       question: 'When will my payment be charged?',
-      answer: 'For card and mobile money payments, you\'re charged immediately. We do not accept payment on delivery — payment must be completed before dispatch. If an item is out of stock, we\'ll refund you within 24 hours.'
+      answer: 'For card and mobile money payments, you\'re charged immediately. We do not accept payment on delivery. Payment must be completed before dispatch. If an item is out of stock, we\'ll refund you within 24 hours.'
     },
     {
       category: 'payment',

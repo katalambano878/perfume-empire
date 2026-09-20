@@ -19,7 +19,7 @@ export default function Header() {
   const { getSetting } = useCMS();
 
   const siteName = getSetting('site_name') || 'The Perfume Empire';
-  const headerLogo = getSetting('site_logo') || '/logo.png';
+  const headerLogo = '/logo-brand.png';
 
   useEffect(() => {
     // Wishlist logic
@@ -60,32 +60,32 @@ export default function Header() {
     <>
       <AnnouncementBar />
 
-      <header className="bg-white sticky top-0 z-50 border-b border-gray-100 transition-all duration-300">
-        <div className="safe-area-top" />
-        <nav aria-label="Main navigation" className="relative">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+      {/* Floating Glassmorphic Header */}
+      <div className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 pointer-events-none flex justify-center">
+        <header className="pointer-events-auto w-full max-w-[1400px] glass-nav rounded-2xl transition-all duration-500 ease-out">
+          <nav aria-label="Main navigation" className="relative px-4 sm:px-6 lg:px-8">
+            <div className="h-16 md:h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
 
               {/* Left: Mobile Menu Trigger (Mobile) & Logo */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <button
-                  className="lg:hidden p-2 -ml-2 text-gray-900 hover:text-gray-600 transition-colors"
+                  className="lg:hidden p-2 -ml-2 text-neutral-800 hover:text-neutral-500 transition-colors rounded-full hover:bg-black/5"
                   onClick={() => setIsMobileMenuOpen(true)}
                   aria-label="Open menu"
                 >
-                  <i className="ri-menu-line text-2xl"></i>
+                  <i className="ri-menu-4-line text-2xl"></i>
                 </button>
                 <Link
                   href="/"
-                  className="flex items-center select-none"
+                  className="flex items-center select-none py-2"
                   aria-label="Go to homepage"
                 >
-                  <img src={headerLogo} alt={siteName} className="h-12 md:h-14 w-auto max-w-[220px] sm:max-w-[280px] object-contain" />
+                  <img src={headerLogo} alt={siteName} className="h-9 md:h-12 w-auto max-w-[200px] sm:max-w-[280px] object-contain drop-shadow-sm" />
                 </Link>
               </div>
 
               {/* Center: Navigation Links (Desktop) */}
-              <div className="hidden lg:flex items-center justify-center space-x-12">
+              <div className="hidden lg:flex items-center justify-center space-x-10">
                 {[
                   { label: 'Shop', href: '/shop' },
                   { label: 'Categories', href: '/categories' },
@@ -95,32 +95,32 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="group relative py-2 text-sm uppercase tracking-widest font-medium text-gray-900 transition-colors hover:text-gray-600"
+                    className="group relative py-2 text-xs uppercase tracking-[0.15em] font-medium text-neutral-700 transition-colors hover:text-black"
                   >
                     {link.label}
-                    <span className="absolute inset-x-0 bottom-0 h-px scale-x-0 bg-gray-900 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                    <span className="absolute inset-x-0 bottom-0 h-[2px] scale-x-0 bg-black transition-transform duration-300 ease-out group-hover:scale-x-100 origin-left rounded-full" />
                   </Link>
                 ))}
               </div>
 
               {/* Right: Icons */}
-              <div className="flex items-center justify-end space-x-2 sm:space-x-4">
+              <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                 <button
-                  className="p-2 text-gray-900 hover:text-gray-600 transition-transform hover:scale-105"
+                  className="p-2.5 text-neutral-800 hover:text-black hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105"
                   onClick={() => setIsSearchOpen(true)}
                   aria-label="Search"
                 >
-                  <i className="ri-search-line text-xl"></i>
+                  <i className="ri-search-line text-[22px]"></i>
                 </button>
 
                 <Link
                   href="/wishlist"
-                  className="p-2 text-gray-900 hover:text-gray-600 transition-transform hover:scale-105 relative hidden sm:block"
+                  className="p-2.5 text-neutral-800 hover:text-black hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative hidden sm:block"
                   aria-label="Wishlist"
                 >
-                  <i className="ri-heart-line text-xl"></i>
+                  <i className="ri-heart-line text-[22px]"></i>
                   {wishlistCount > 0 && (
-                    <span className="absolute top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
                       {wishlistCount}
                     </span>
                   )}
@@ -129,30 +129,30 @@ export default function Header() {
                 {user ? (
                   <Link
                     href="/account"
-                    className="p-2 text-gray-900 hover:text-gray-600 transition-transform hover:scale-105 hidden sm:block"
+                    className="p-2.5 text-neutral-800 hover:text-black hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 hidden sm:block"
                     aria-label="Account"
                   >
-                    <i className="ri-user-line text-xl"></i>
+                    <i className="ri-user-line text-[22px]"></i>
                   </Link>
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="p-2 text-gray-900 hover:text-gray-600 transition-transform hover:scale-105 hidden sm:block"
+                    className="p-2.5 text-neutral-800 hover:text-black hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 hidden sm:block"
                     aria-label="Login"
                   >
-                    <i className="ri-user-line text-xl"></i>
+                    <i className="ri-user-3-line text-[22px]"></i>
                   </Link>
                 )}
 
                 <div className="relative">
                   <button
-                    className="p-2 text-gray-900 hover:text-gray-600 transition-transform hover:scale-105"
+                    className="p-2.5 text-neutral-800 hover:text-black hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative"
                     onClick={() => setIsCartOpen(!isCartOpen)}
                     aria-label="Cart"
                   >
-                    <i className="ri-shopping-bag-line text-xl"></i>
+                    <i className="ri-shopping-bag-line text-[22px]"></i>
                     {cartCount > 0 && (
-                      <span className="absolute top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+                      <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
                         {cartCount}
                       </span>
                     )}
@@ -162,9 +162,9 @@ export default function Header() {
               </div>
 
             </div>
-          </div>
-        </nav>
-      </header>
+          </nav>
+        </header>
+      </div>
 
       {isSearchOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24">
@@ -214,7 +214,7 @@ export default function Header() {
           <div className="absolute top-0 left-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl flex flex-col animate-in slide-in-from-left duration-300">
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <img src={headerLogo} alt={siteName} className="h-11 w-auto max-w-[200px] object-contain" />
+                <img src={headerLogo} alt={siteName} className="h-10 w-auto max-w-[200px] object-contain" />
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}

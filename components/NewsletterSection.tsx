@@ -39,7 +39,7 @@ export default function NewsletterSection() {
               Stay in the <span className="italic text-white/80">scent</span>
             </h3>
             <p className="text-white/60 text-sm leading-relaxed font-light">
-              New arrivals, exclusive offers and fragrance stories. No spam — just the good stuff.
+              New arrivals, exclusive offers and fragrance stories. No spam, just the good stuff.
             </p>
           </div>
 

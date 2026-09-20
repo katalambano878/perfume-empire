@@ -3,6 +3,47 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white;
+  }
+}
+
+/* ========================================
+   GLOBAL GLASSMORPHISM & UI ENHANCEMENTS
+   ======================================== */
+
+.glass-nav {
+  @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] supports-[backdrop-filter]:bg-white/60;
+}
+
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.04)];
+}
+
+.glass-card {
+  @apply bg-white/60 backdrop-blur-lg border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/80 transition-all duration-500 ease-out;
+}
+
+.glass-dark {
+  @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+}
+
+/* Custom Scrollbar for a sleek look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 rounded-full border-2 border-solid border-neutral-50;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-400;
+}
+
 /* ========================================
    ANIMATIONS & EFFECTS
    ======================================== */

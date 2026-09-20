@@ -1,38 +1,15 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
 import { useCMS } from '@/context/CMSContext';
-
-function FooterSection({ title, children }: { title: string, children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="border-b border-blue-800/50 lg:border-none last:border-0">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-4 text-left lg:py-0 lg:cursor-default lg:mb-6"
-      >
-        <h4 className="font-bold text-lg text-white">{title}</h4>
-        <i className={`ri-arrow-down-s-line text-blue-400 text-xl transition-transform duration-300 lg:hidden ${isOpen ? 'rotate-180' : ''}`}></i>
-      </button>
-      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-6' : 'max-h-0 lg:max-h-full lg:overflow-visible'}`}>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 export default function Footer() {
   const { getSetting } = useCMS();
 
   const siteName = getSetting('site_name') || 'The Perfume Empire';
-  const siteTagline = getSetting('site_tagline') || 'Premium fragrances — East Legon. Wholesale & retail.';
-  const contactEmail = getSetting('contact_email') || 'tiwaperfumestyle@gmail.com';
   const contactPhone = getSetting('contact_phone') || '0553967658';
-  const contactWhatsapp = getSetting('contact_whatsapp') || '0553967658';
+  const contactEmail = getSetting('contact_email') || 'tiwaperfumestyle@gmail.com';
   const contactAddress = getSetting('contact_address') || 'East Legon, near America House';
-  const siteLogo = getSetting('site_logo') || '/logo.png';
   const socialFacebook = getSetting('social_facebook') || '';
   const socialInstagram = getSetting('social_instagram') || '';
   const socialTwitter = getSetting('social_twitter') || '';
@@ -40,92 +17,103 @@ export default function Footer() {
   const socialSnapchat = getSetting('social_snapchat') || '';
   const socialYoutube = getSetting('social_youtube') || '';
 
+  const socials = [
+    { link: socialInstagram, icon: 'ri-instagram-line', label: 'Instagram' },
+    { link: socialTiktok, icon: 'ri-tiktok-fill', label: 'TikTok' },
+    { link: socialSnapchat, icon: 'ri-snapchat-fill', label: 'Snapchat' },
+    { link: socialYoutube, icon: 'ri-youtube-fill', label: 'YouTube' },
+    { link: socialTwitter, icon: 'ri-twitter-x-fill', label: 'X' },
+    { link: socialFacebook, icon: 'ri-facebook-fill', label: 'Facebook' },
+  ].filter((s) => s.link);
+
+  const linkClass =
+    'text-neutral-400 hover:text-white transition-colors text-sm';
+
   return (
-    <footer className="relative mt-16 z-0">
-
-      <div className="absolute inset-0 bg-gray-950 rounded-t-[2.5rem] -z-10 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      </div>
-
-      <div className="text-white pt-14 pb-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-
-            {/* Brand */}
-            <div className="lg:col-span-1 space-y-5">
-              <Link href="/" className="inline-block group">
-                <img src={siteLogo} alt={siteName} className="h-16 w-auto max-w-[280px] object-contain group-hover:opacity-90 transition-opacity" />
-              </Link>
-              <p className="text-white/60 leading-relaxed text-sm font-light">
-                {siteTagline}
-              </p>
-              <p className="text-white/50 text-sm font-light">{contactAddress}</p>
-              <a href={`tel:${contactPhone}`} className="text-white/70 text-sm font-medium hover:text-white transition-colors block">055 396 7658</a>
-              <div className="flex gap-2 pt-1">
-                {[
-                  { link: socialInstagram, icon: 'ri-instagram-line', label: 'Instagram' },
-                  { link: socialTiktok, icon: 'ri-tiktok-fill', label: 'TikTok' },
-                  { link: socialSnapchat, icon: 'ri-snapchat-fill', label: 'Snapchat' },
-                  { link: socialYoutube, icon: 'ri-youtube-fill', label: 'YouTube' },
-                  { link: socialTwitter, icon: 'ri-twitter-x-fill', label: 'X' },
-                  { link: socialFacebook, icon: 'ri-facebook-fill', label: 'Facebook' }
-                ].filter(s => s.link).map((social, i) => (
+    <footer className="bg-neutral-950 text-white border-t border-neutral-800 mt-12 md:mt-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1 space-y-4">
+            <Link href="/" className="inline-block">
+              <img
+                src="/logo-brand.png"
+                alt={siteName}
+                className="h-11 md:h-14 w-auto max-w-[240px] object-contain object-left"
+              />
+            </Link>
+            <div className="space-y-1 text-sm text-neutral-400">
+              <p>{contactAddress}</p>
+              <a href={`tel:${contactPhone}`} className="block hover:text-white transition-colors">
+                055 396 7658
+              </a>
+              <a href={`mailto:${contactEmail}`} className="block hover:text-white transition-colors break-all">
+                {contactEmail}
+              </a>
+            </div>
+            {socials.length > 0 && (
+              <div className="flex flex-wrap gap-3 pt-1">
+                {socials.map((social) => (
                   <a
-                    key={i}
+                    key={social.label}
                     href={social.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all"
+                    className="text-neutral-400 hover:text-white transition-colors text-lg"
                   >
                     <i className={social.icon} />
                   </a>
                 ))}
               </div>
-            </div>
-
-            {/* Shop */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-semibold tracking-widest text-white/50 uppercase">Shop</h4>
-              <ul className="space-y-2.5 text-sm text-white/60 font-light">
-                <li><Link href="/shop" className="hover:text-white transition-colors">All Products</Link></li>
-                <li><Link href="/categories" className="hover:text-white transition-colors">Collections</Link></li>
-                <li><Link href="/shop?category=mens" className="hover:text-white transition-colors">Men&apos;s</Link></li>
-                <li><Link href="/shop?category=womens" className="hover:text-white transition-colors">Women&apos;s</Link></li>
-                <li><Link href="/shop?sort=newest" className="hover:text-white transition-colors">New Arrivals</Link></li>
-              </ul>
-            </div>
-
-            {/* Support */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-semibold tracking-widest text-white/50 uppercase">Support</h4>
-              <ul className="space-y-2.5 text-sm text-white/60 font-light">
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="/order-tracking" className="hover:text-white transition-colors">Track Order</Link></li>
-                <li><Link href="/shipping" className="hover:text-white transition-colors">Shipping</Link></li>
-                <li><Link href="/returns" className="hover:text-white transition-colors">Returns</Link></li>
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-semibold tracking-widest text-white/50 uppercase">Company</h4>
-              <ul className="space-y-2.5 text-sm text-white/60 font-light">
-                <li><Link href="/about" className="hover:text-white transition-colors">Our Story</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-              </ul>
-            </div>
+            )}
           </div>
 
-          <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/40 font-light">
-            <p>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <span className="text-white/30">Secure payment</span>
-              <i className="ri-visa-line text-lg text-white/40" aria-hidden />
-              <i className="ri-mastercard-line text-lg text-white/40" aria-hidden />
-            </div>
+          {/* Shop */}
+          <div>
+            <h4 className="text-xs font-medium tracking-wider text-white uppercase mb-4">
+              Shop
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link href="/shop" className={linkClass}>All Products</Link></li>
+              <li><Link href="/categories" className={linkClass}>Collections</Link></li>
+              <li><Link href="/shop?category=mens" className={linkClass}>Men&apos;s</Link></li>
+              <li><Link href="/shop?category=womens" className={linkClass}>Women&apos;s</Link></li>
+              <li><Link href="/shop?sort=newest" className={linkClass}>New Arrivals</Link></li>
+            </ul>
           </div>
+
+          {/* Support */}
+          <div>
+            <h4 className="text-xs font-medium tracking-wider text-white uppercase mb-4">
+              Support
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link href="/contact" className={linkClass}>Contact</Link></li>
+              <li><Link href="/order-tracking" className={linkClass}>Track Order</Link></li>
+              <li><Link href="/shipping" className={linkClass}>Shipping</Link></li>
+              <li><Link href="/returns" className={linkClass}>Returns</Link></li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="text-xs font-medium tracking-wider text-white uppercase mb-4">
+              Company
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link href="/about" className={linkClass}>Our Story</Link></li>
+              <li><Link href="/privacy" className={linkClass}>Privacy Policy</Link></li>
+              <li><Link href="/terms" className={linkClass}>Terms of Service</Link></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-neutral-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-500">
+          <p>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
+          <p className="text-neutral-600">East Legon, Accra</p>
         </div>
       </div>
     </footer>

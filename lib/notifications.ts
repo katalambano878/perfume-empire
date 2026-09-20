@@ -487,7 +487,7 @@ export async function sendPaymentLink(order: any) {
 
 <p style="color:#374151;font-size:14px;line-height:1.6;margin:16px 0;">Click the button below to securely complete your payment. This link will remain active until your order is completed or cancelled.</p>
 
-${emailButton('Pay Now — GH₵' + Number(total).toFixed(2), paymentUrl, '#d97706')}
+${emailButton('Pay Now · GH₵' + Number(total).toFixed(2), paymentUrl, '#d97706')}
 
 <p style="color:#9ca3af;font-size:12px;text-align:center;margin:0;">Or copy this link: <a href="${paymentUrl}" style="color:${BRAND.color};">${paymentUrl}</a></p>
 `, `Complete payment for order #${order_number}`)

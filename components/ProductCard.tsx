@@ -96,27 +96,33 @@ export default function ProductCard({
   };
 
   return (
-    <div className="group bg-white/70 backdrop-blur-sm rounded-2xl h-full flex flex-col border border-gray-100/80 shadow-sm hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden">
+    <div className="group glass-card rounded-[1.5rem] h-full flex flex-col overflow-hidden relative">
+      {/* Soft gradient background mesh behind card */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
       <Link
         href={`/product/${slug}`}
-        className="relative block aspect-[3/4] overflow-hidden bg-gray-50 mb-4"
+        className="relative block aspect-[3/4] overflow-hidden bg-neutral-100/50 mb-4 rounded-t-[1.5rem]"
         onMouseEnter={() => setHoverScent(true)}
         onMouseLeave={() => setHoverScent(false)}
       >
         <LazyImage
           src={image}
           alt={name}
-          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1200ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
         />
+
+        {/* Glassmorphic overlay gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
 
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
           {badge && (
-            <span className="bg-white/95 backdrop-blur text-gray-900 border border-gray-100 text-[10px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-full shadow-sm">
+            <span className="bg-white/80 backdrop-blur-md text-neutral-900 border border-white/40 text-[9px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full shadow-sm">
               {badge}
             </span>
           )}
           {discount > 0 && (
-            <span className="bg-rose-500/90 text-white text-[10px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-full shadow-sm">
+            <span className="bg-rose-500/90 backdrop-blur-md text-white border border-rose-400/50 text-[9px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full shadow-sm">
               -{discount}%
             </span>
           )}
@@ -125,30 +131,32 @@ export default function ProductCard({
         <button
           type="button"
           onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:text-rose-500 hover:border-rose-200 transition-all duration-300 opacity-0 group-hover:opacity-100"
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md flex items-center justify-center shadow-sm border border-white/50 text-neutral-600 hover:bg-white hover:text-rose-500 hover:border-white hover:shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 md:translate-x-2 md:group-hover:translate-x-0"
           aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <i className={isWishlisted ? 'ri-heart-fill text-rose-500' : 'ri-heart-line'} />
+          <i className={isWishlisted ? 'ri-heart-fill text-rose-500' : 'ri-heart-line text-lg'} />
         </button>
 
         {scentNotes && (
-          <div className={`absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white text-xs font-light tracking-wide transition-all duration-300 ${hoverScent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-            <span className="text-white/70 uppercase tracking-widest">Notes</span>
-            <p className="mt-1">{scentNotes}</p>
+          <div className={`absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white text-xs font-light tracking-wide transition-all duration-500 z-10 ${hoverScent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <span className="text-white/60 text-[10px] uppercase tracking-[0.2em] font-medium block mb-1">Notes</span>
+            <p className="drop-shadow-sm leading-relaxed">{scentNotes}</p>
           </div>
         )}
 
         {!inStock && (
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center">
-            <span className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium">Out of Stock</span>
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-md flex items-center justify-center z-20">
+            <span className="bg-neutral-900/90 backdrop-blur-sm text-white px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-semibold shadow-xl border border-white/10">
+              Out of Stock
+            </span>
           </div>
         )}
 
         {inStock && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 hidden lg:block z-10">
+          <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-[120%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hidden lg:block z-20">
             {hasVariants ? (
-              <span className="w-full bg-gray-900 text-white py-3 rounded-full font-medium shadow-lg flex items-center justify-center gap-2 text-sm">
-                <i className="ri-list-check" />
+              <span className="w-full bg-white/90 backdrop-blur-md text-neutral-900 py-3 rounded-full font-semibold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 flex items-center justify-center gap-2 text-xs uppercase tracking-widest hover:bg-white transition-colors">
+                <i className="ri-list-check text-base" />
                 <span>Select Options</span>
               </span>
             ) : (
@@ -157,9 +165,9 @@ export default function ProductCard({
                   e.preventDefault();
                   addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
                 }}
-                className="w-full bg-gray-900 text-white hover:bg-gray-800 py-3 rounded-full font-medium shadow-lg transition-all flex items-center justify-center gap-2 text-sm"
+                className="w-full bg-neutral-900/90 backdrop-blur-md text-white hover:bg-black py-3 rounded-full font-semibold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 transition-colors flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
               >
-                <i className="ri-shopping-cart-2-line" />
+                <i className="ri-shopping-cart-2-line text-base" />
                 <span>{moq > 1 ? `Add ${moq} to Cart` : 'Quick Add'}</span>
               </button>
             )}
@@ -167,23 +175,23 @@ export default function ProductCard({
         )}
       </Link>
 
-      <div className="flex flex-col flex-grow px-4 pb-4">
+      <div className="flex flex-col flex-grow px-5 pb-5 relative z-10">
         <Link href={`/product/${slug}`}>
-          <h3 className="font-serif text-lg leading-tight text-gray-900 mb-1 group-hover:text-gray-600 transition-colors line-clamp-2">
+          <h3 className="font-serif text-[1.1rem] leading-snug text-neutral-900 mb-1.5 group-hover:text-neutral-600 transition-colors line-clamp-2">
             {name}
           </h3>
         </Link>
 
         {(rating > 0 || reviewCount > 0) && (
-          <div className="flex items-center gap-1.5 mb-2 text-gray-400">
-            <span className="text-amber-500 text-sm">★</span>
-            <span className="text-sm font-light">{Number(rating).toFixed(1)}</span>
-            {reviewCount > 0 && <span className="text-xs text-gray-400">({reviewCount})</span>}
+          <div className="flex items-center gap-1.5 mb-2.5 text-neutral-400">
+            <span className="text-amber-400 text-sm">★</span>
+            <span className="text-xs font-medium text-neutral-600">{Number(rating).toFixed(1)}</span>
+            {reviewCount > 0 && <span className="text-[11px] text-neutral-400">({reviewCount})</span>}
           </div>
         )}
 
         {colorVariants.length > 0 && (
-          <div className="flex items-center gap-1.5 mb-2">
+          <div className="flex items-center gap-2 mb-3">
             {colorVariants.slice(0, MAX_SWATCHES).map((color) => (
               <button
                 key={color.name}
@@ -192,36 +200,36 @@ export default function ProductCard({
                   e.preventDefault();
                   setActiveColor(activeColor === color.name ? null : color.name);
                 }}
-                className={`w-4 h-4 rounded-full border-2 transition-all duration-200 flex-shrink-0 ${
-                  activeColor === color.name ? 'ring-2 ring-offset-1 ring-gray-400 scale-110' : 'hover:scale-110'
-                } ${color.hex === '#FFFFFF' ? 'border-gray-300' : 'border-transparent'}`}
+                className={`w-3.5 h-3.5 rounded-full border border-white/50 shadow-sm transition-all duration-300 flex-shrink-0 ${
+                  activeColor === color.name ? 'ring-2 ring-offset-2 ring-neutral-400 scale-110' : 'hover:scale-125 hover:shadow-md'
+                } ${color.hex === '#FFFFFF' ? 'border-neutral-200' : ''}`}
                 style={{ backgroundColor: color.hex }}
               />
             ))}
             {colorVariants.length > MAX_SWATCHES && (
-              <span className="text-xs text-gray-400 ml-0.5">+{colorVariants.length - MAX_SWATCHES}</span>
+              <span className="text-[10px] font-medium text-neutral-400 ml-1">+{colorVariants.length - MAX_SWATCHES}</span>
             )}
           </div>
         )}
 
-        <div className="flex items-baseline gap-2 mb-3">
+        <div className="flex items-baseline gap-2.5 mb-2 mt-auto">
           {hasVariants && minVariantPrice ? (
-            <span className="text-gray-900 font-semibold">From {formatPrice(minVariantPrice)}</span>
+            <span className="text-neutral-900 font-semibold tracking-tight text-[15px]">From {formatPrice(minVariantPrice)}</span>
           ) : (
-            <span className="text-gray-900 font-semibold">{formatPrice(price)}</span>
+            <span className="text-neutral-900 font-semibold tracking-tight text-[15px]">{formatPrice(price)}</span>
           )}
           {originalPrice && (
-            <span className="text-sm text-gray-400 line-through">{formatPrice(originalPrice)}</span>
+            <span className="text-xs text-neutral-400 line-through decoration-neutral-300 font-medium">{formatPrice(originalPrice)}</span>
           )}
         </div>
 
-        <div className="mt-auto pt-2 lg:hidden">
+        <div className="mt-4 pt-3 border-t border-neutral-200/60 lg:hidden">
           {hasVariants ? (
             <Link
               href={`/product/${slug}`}
-              className="w-full border border-gray-200 text-gray-900 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center justify-center space-x-1"
+              className="w-full bg-white/80 border border-neutral-200/80 text-neutral-900 py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-neutral-50 active:bg-neutral-100 transition-colors flex items-center justify-center space-x-1.5 shadow-sm"
             >
-              <i className="ri-list-check text-sm"></i>
+              <i className="ri-list-check text-sm" />
               <span>Select Options</span>
             </Link>
           ) : (
@@ -231,7 +239,7 @@ export default function ProductCard({
                 addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
               }}
               disabled={!inStock}
-              className="w-full border border-gray-200 text-gray-900 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-neutral-900 text-white py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             >
               {moq > 1 ? `Add ${moq} to Cart` : 'Add to Cart'}
             </button>
