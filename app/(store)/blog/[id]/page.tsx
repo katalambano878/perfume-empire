@@ -1,5 +1,25 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { pageMetadata } from '@/lib/seo';
+
+const BLOG_SEO: Record<string, { title: string; description: string }> = {
+  '1': {
+    title: 'How to Shop Fragrances Online in Ghana',
+    description:
+      'A practical guide to buying perfume online in Ghana — payments, delivery, and how to shop safely at The Perfume Empire.',
+  },
+  '2': {
+    title: '10 Must-Have Fragrances This Season',
+    description:
+      'Seasonal fragrance picks from The Perfume Empire in East Legon — scents worth adding to your collection in Ghana.',
+  },
+  '3': {
+    title: 'How to Choose Quality Perfume',
+    description:
+      'How to tell authentic perfume from a poor copy, and what to look for when buying fragrance in Accra.',
+  },
+};
 
 export async function generateStaticParams() {
   return [
@@ -7,6 +27,30 @@ export async function generateStaticParams() {
     { id: '2' },
     { id: '3' },
   ];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const entry = BLOG_SEO[id];
+  if (!entry) {
+    return pageMetadata({
+      title: 'Fragrance Guide',
+      description: 'Perfume tips from The Perfume Empire in East Legon.',
+      path: `/blog/${id}`,
+      noindex: true,
+    });
+  }
+  return pageMetadata({
+    title: entry.title,
+    description: entry.description,
+    path: `/blog/${id}`,
+    type: 'article',
+    keywords: ['perfume guide Ghana', 'fragrance tips Accra'],
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -288,11 +332,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block bg-brand text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
               {post.category}
             </span>
             <h1 className="text-5xl font-bold text-white mb-6">{post.title}</h1>
-            <div className="flex items-center justify-center gap-6 text-blue-100">
+            <div className="flex items-center justify-center gap-6 text-white/80">
               <span className="flex items-center gap-2">
                 <i className="ri-user-line"></i>
                 {post.author}
@@ -327,8 +371,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
             <div>
               <p className="text-sm text-gray-500 mb-2">Written by</p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <i className="ri-user-line text-blue-700 text-xl"></i>
+                <div className="w-12 h-12 bg-brand-muted rounded-full flex items-center justify-center">
+                  <i className="ri-user-line text-brand text-xl"></i>
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">{post.author}</p>
@@ -339,16 +383,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
             <div>
               <p className="text-sm text-gray-500 mb-3">Share this article</p>
               <div className="flex gap-3">
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors cursor-pointer">
+                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-brand-muted transition-colors cursor-pointer">
                   <i className="ri-facebook-fill text-gray-600"></i>
                 </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors cursor-pointer">
+                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-brand-muted transition-colors cursor-pointer">
                   <i className="ri-twitter-fill text-gray-600"></i>
                 </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors cursor-pointer">
+                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-brand-muted transition-colors cursor-pointer">
                   <i className="ri-linkedin-fill text-gray-600"></i>
                 </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors cursor-pointer">
+                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-brand-muted transition-colors cursor-pointer">
                   <i className="ri-whatsapp-line text-gray-600"></i>
                 </button>
               </div>
@@ -371,7 +415,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
                     alt={relatedPost.title}
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute top-4 left-4 bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <span className="absolute top-4 left-4 bg-brand text-white px-3 py-1 rounded-full text-xs font-medium">
                     {relatedPost.category}
                   </span>
                 </div>
@@ -385,9 +429,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
 
-        <div className="mt-16 bg-gradient-to-br from-blue-700 to-blue-900 rounded-2xl p-12 text-center text-white">
+        <div className="mt-16 bg-gradient-to-br from-brand to-brand-dark rounded-2xl p-12 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Enjoyed This Article?</h2>
-          <p className="text-blue-100 mb-8 text-lg">
+          <p className="text-white/80 mb-8 text-lg">
             Subscribe to our newsletter for more shopping tips and exclusive offers
           </p>
           <form className="max-w-md mx-auto flex gap-3">
@@ -398,7 +442,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
             />
             <button
               type="submit"
-              className="bg-white text-blue-700 px-8 py-4 rounded-full font-medium hover:bg-blue-50 transition-colors whitespace-nowrap"
+              className="bg-white text-brand px-8 py-4 rounded-full font-medium hover:bg-cream transition-colors whitespace-nowrap"
             >
               Subscribe
             </button>
@@ -408,7 +452,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
         <div className="mt-12 text-center">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-blue-700 font-medium hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 text-brand font-medium hover:gap-3 transition-all"
           >
             <i className="ri-arrow-left-line"></i>
             Back to Blog

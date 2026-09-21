@@ -1,5 +1,5 @@
 // The Perfume Empire - Service Worker v2.3
-const CACHE_VERSION = 'perfume-empire-v2.3';
+const CACHE_VERSION = 'perfume-empire-v2.4';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `images-${CACHE_VERSION}`;
@@ -39,7 +39,7 @@ async function trimCache(cacheName, maxItems) {
 
 // Install: pre-cache static assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing The Perfume Empire v2.3...');
+  console.log('[SW] Installing The Perfume Empire v2.4...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
@@ -56,7 +56,7 @@ self.addEventListener('install', (event) => {
 
 // Activate: clean old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating The Perfume Empire v2.3...');
+  console.log('[SW] Activating The Perfume Empire v2.4...');
   event.waitUntil(
     caches.keys()
       .then((keys) => {
@@ -73,6 +73,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Fetch: smart caching strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -83,6 +89,10 @@ self.addEventListener('fetch', (event) => {
 
   // Skip chrome-extension, ws, and other non-http
   if (!url.protocol.startsWith('http')) return;
+
+  // Never cache Next.js bundles. Cache-first here served stale JS
+  // (the old "Missing Supabase environment variables" throw) on localhost.
+  if (url.pathname.startsWith('/_next/')) return;
 
   // Skip API routes that modify data
   if (url.pathname.startsWith('/api/payment')) return;
@@ -156,10 +166,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy: Static assets (JS, CSS, fonts) - Cache First
+  // Strategy: fonts / vendor CSS — Cache First (not Next.js)
   if (
-    url.pathname.startsWith('/_next/static') ||
-    url.pathname.match(/\.(js|css|woff|woff2|ttf|eot)$/) ||
+    url.pathname.match(/\.(woff|woff2|ttf|eot)$/) ||
     url.hostname === 'fonts.googleapis.com' ||
     url.hostname === 'fonts.gstatic.com' ||
     url.hostname === 'cdn.jsdelivr.net'

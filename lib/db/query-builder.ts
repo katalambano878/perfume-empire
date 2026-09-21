@@ -1,5 +1,5 @@
 // ============================================================================
-// supabase-js compatibility layer over node-postgres.
+// Query builder over node-postgres (PostgREST-shaped filters for /rest/v1).
 //
 // Goal: let the ~90 ported edge functions keep calling `supabase.from(...)...`
 // unchanged while all data access runs against a plain Postgres database.

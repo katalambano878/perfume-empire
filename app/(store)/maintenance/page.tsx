@@ -1,10 +1,10 @@
 export default function MaintenancePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-cream via-white to-gold-light flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-8">
-          <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i className="ri-tools-line text-6xl text-blue-700"></i>
+          <div className="w-32 h-32 bg-brand-muted rounded-full flex items-center justify-center mx-auto mb-6">
+            <i className="ri-tools-line text-6xl text-brand"></i>
           </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             We'll Be Right Back
@@ -16,7 +16,7 @@ export default function MaintenancePage() {
 
         <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Expected Downtime</h2>
-          <div className="flex items-center justify-center gap-3 text-blue-700">
+          <div className="flex items-center justify-center gap-3 text-brand">
             <i className="ri-time-line text-3xl"></i>
             <div className="text-left">
               <p className="text-sm text-gray-600">Estimated completion</p>
@@ -27,31 +27,31 @@ export default function MaintenancePage() {
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="ri-rocket-line text-2xl text-blue-700"></i>
+            <div className="w-12 h-12 bg-brand-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="ri-rocket-line text-2xl text-brand"></i>
             </div>
             <h3 className="font-bold text-gray-900 mb-2">Performance</h3>
             <p className="text-gray-600 text-sm">Faster loading times and smoother navigation</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="ri-shield-check-line text-2xl text-blue-700"></i>
+            <div className="w-12 h-12 bg-brand-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="ri-shield-check-line text-2xl text-brand"></i>
             </div>
             <h3 className="font-bold text-gray-900 mb-2">Security</h3>
             <p className="text-gray-600 text-sm">Enhanced protection for your data and transactions</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="ri-sparkle-line text-2xl text-amber-700"></i>
+            <div className="w-12 h-12 bg-gold-light rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="ri-sparkle-line text-2xl text-gold-dark"></i>
             </div>
             <h3 className="font-bold text-gray-900 mb-2">Features</h3>
             <p className="text-gray-600 text-sm">New functionality to enhance your experience</p>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 mb-8">
+        <div className="bg-cream border border-cream-dark rounded-2xl p-8 mb-8">
           <h3 className="text-xl font-bold text-gray-900 mb-4">Need Immediate Assistance?</h3>
           <p className="text-gray-600 mb-6">
             Our customer service team is still available to help you
@@ -68,7 +68,7 @@ export default function MaintenancePage() {
               href="https://wa.me/233553967658"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-800 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-full font-medium hover:bg-brand-dark transition-colors whitespace-nowrap"
             >
               <i className="ri-whatsapp-line"></i>
               WhatsApp

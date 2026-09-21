@@ -2,7 +2,7 @@
  * Upload product images to Supabase Storage and build a map of filename -> public URL.
  */
 
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 
 const BUCKET = 'products';
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB per image
@@ -60,7 +60,7 @@ export async function uploadProductImages(
     const base = safeStorageName(filename);
     const path = `${prefix}/${base}`;
 
-    const { error } = await supabaseAdmin.storage.from(BUCKET).upload(path, buf, {
+    const { error } = await db.storage.from(BUCKET).upload(path, buf, {
       contentType: ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : ext === '.webp' ? 'image/webp' : 'image/jpeg',
       upsert: true,
     });
@@ -74,7 +74,7 @@ export async function uploadProductImages(
       continue;
     }
 
-    const { data: { publicUrl } } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(path);
+    const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
     urlMap.set(filename.toLowerCase().trim(), publicUrl);
     urlMap.set(filename, publicUrl);
     current++;

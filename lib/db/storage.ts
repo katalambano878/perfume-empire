@@ -14,7 +14,6 @@ const STORAGE_ROOT =
 function publicBase(): string {
   return (
     process.env.STORAGE_PUBLIC_URL ||
-    process.env.SUPABASE_PUBLIC_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
     "http://localhost:3000"
   ).replace(/\/+$/, "");

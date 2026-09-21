@@ -25,9 +25,9 @@ export default function WhoWeAreSection() {
               <div className="pt-4">
                 <Link 
                   href="/about" 
-                  className="inline-flex items-center text-blue-800 font-medium hover:text-blue-900 transition-colors group"
+                  className="inline-flex items-center text-brand font-medium hover:text-brand-dark transition-colors group"
                 >
-                  <span className="border-b border-transparent group-hover:border-blue-900 transition-colors">Read Our Full Story</span>
+                  <span className="border-b border-transparent group-hover:border-brand-dark transition-colors">Read Our Full Story</span>
                   <i className="ri-arrow-right-line ml-2 transition-transform group-hover:translate-x-1"></i>
                 </Link>
               </div>
@@ -45,13 +45,13 @@ export default function WhoWeAreSection() {
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
               {/* Decorative Overlay */}
-              <div className="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent transition-colors duration-300"></div>
+              <div className="absolute inset-0 bg-brand-dark/10 group-hover:bg-transparent transition-colors duration-300"></div>
             </div>
             
             {/* Floating Element */}
             <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl max-w-xs hidden md:block animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700">
+                <div className="w-12 h-12 bg-brand-muted rounded-full flex items-center justify-center text-brand">
                   <i className="ri-medal-line text-xl"></i>
                 </div>
                 <div>

@@ -5,7 +5,7 @@
 
 @layer base {
   body {
-    @apply bg-neutral-50 text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white;
+    @apply bg-[#fafafa] text-neutral-900 antialiased selection:bg-brand selection:text-white;
   }
 }
 
@@ -656,7 +656,7 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 50%, #0c4a6e 100%);
+  background: linear-gradient(135deg, #0d3b2e 0%, #08261e 50%, #0a1612 100%);
   animation: splashFadeOut 0.5s ease-out 1.5s forwards;
 }
 
@@ -723,4 +723,31 @@ img {
 .vertical-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes heroProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-hero-progress {
+  transform-origin: left;
+  animation: heroProgress 5s linear;
 }

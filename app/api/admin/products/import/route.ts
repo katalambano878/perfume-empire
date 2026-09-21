@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 import { extractFromZip } from '@/lib/import/zip-extractor';
 import { parseCSV, type ValidationWarning } from '@/lib/import/csv-parser';
 import { uploadProductImages, collectReferencedImageNames } from '@/lib/import/image-processor';
@@ -219,7 +219,7 @@ export async function POST(request: Request) {
       });
 
       try {
-        await supabaseAdmin.from('audit_logs').insert({
+        await db.from('audit_logs').insert({
           user_id: auth.user.id,
           action: 'product_import',
           entity_type: 'import',

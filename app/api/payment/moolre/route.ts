@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
         // SECURITY: Fetch the order from the database and use its total.
         // NEVER trust the amount from the client.
-        const { data: order, error: orderError } = await supabaseAdmin
+        const { data: order, error: orderError } = await db
             .from('orders')
             .select('id, order_number, total, email, payment_status')
             .or(`id.eq.${orderId},order_number.eq.${orderId}`)

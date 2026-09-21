@@ -10,12 +10,22 @@ module.exports = {
       },
       colors: {
         brand: {
-          DEFAULT: '#2563eb',
-          light: '#3b82f6',
-          dark: '#1e40af',
-          accent: '#38bdf8',
-          muted: '#93c5fd',
+          DEFAULT: '#0d3b2e',
+          light: '#165a45',
+          dark: '#08261e',
+          accent: '#7c2d3a',
+          muted: '#d7e8e1',
         },
+        gold: {
+          DEFAULT: '#ccab66',
+          light: '#e8dcc8',
+          dark: '#8f7438',
+        },
+        cream: {
+          DEFAULT: '#f4efe6',
+          dark: '#eadfd0',
+        },
+        ink: '#0a1612',
       },
     },
   },

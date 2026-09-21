@@ -1,49 +1,89 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { useCMS } from '@/context/CMSContext';
-import { supabase } from '@/lib/supabase';
-import PageHero from '@/components/PageHero';
+import { db } from '@/lib/db/http-client';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
+function formatPhone(raw: string) {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 10) return digits.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+  return raw;
+}
+
+function waHref(raw: string) {
+  const digits = raw.replace(/\D/g, '');
+  return digits.startsWith('0') ? `https://wa.me/233${digits.slice(1)}` : `https://wa.me/${digits}`;
+}
+
+function telHref(raw: string) {
+  const digits = raw.replace(/\D/g, '');
+  return digits.startsWith('0') ? `tel:+233${digits.slice(1)}` : `tel:${digits}`;
+}
+
+const FIELD =
+  'w-full px-4 py-3 rounded-xl border border-cream-dark bg-white text-sm text-ink placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand';
+
 export default function ContactPage() {
-  usePageTitle('Contact Us');
+  usePageTitle('Contact');
   const { getSetting } = useCMS();
-  const [pageContent, setPageContent] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const { getToken, verifying } = useRecaptcha();
 
-  useEffect(() => {
-    async function fetchContactContent() {
-      const { data } = await supabase
-        .from('cms_content')
-        .select('*')
-        .eq('section', 'contact')
-        .eq('block_key', 'main')
-        .single();
+  const email = getSetting('contact_email') || 'hello@theperfumeempire.com';
+  const phone = getSetting('contact_phone') || '0553967658';
+  const whatsapp = getSetting('contact_whatsapp') || phone;
+  const address = getSetting('contact_address') || 'East Legon, near America House';
+  const displayPhone = formatPhone(phone);
+  const displayWa = formatPhone(whatsapp);
+  const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, Accra`)}`;
 
-      if (data) {
-        setPageContent(data);
-      }
-    }
-    fetchContactContent();
-  }, []);
+  const channels = [
+    {
+      label: 'WhatsApp',
+      value: displayWa,
+      href: waHref(whatsapp),
+      note: 'Fastest way to ask for a bottle or send one.',
+      external: true,
+    },
+    {
+      label: 'Call',
+      value: displayPhone,
+      href: telHref(phone),
+      note: 'The shop line for wholesale and retail.',
+      external: false,
+    },
+    {
+      label: 'Email',
+      value: email,
+      href: `mailto:${email}`,
+      note: 'Orders, invoices, and longer notes.',
+      external: false,
+    },
+    {
+      label: 'The shop',
+      value: address,
+      href: maps,
+      note: 'Walk in and smell it at the counter.',
+      external: true,
+    },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
-    // reCAPTCHA verification
     const isHuman = await getToken('contact');
     if (!isHuman) {
       setSubmitStatus('error');
@@ -52,305 +92,224 @@ export default function ContactPage() {
     }
 
     try {
-      // Store in Supabase
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-        });
+      const { error } = await db.from('contact_submissions').insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      });
 
       if (error) {
-        // Table might not exist, still show success
         console.log('Note: contact_submissions table may not exist');
       }
 
-      // Send Contact Notification
       fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'contact',
-          payload: formData
-        })
-      }).catch(err => console.error('Contact notification error:', err));
+        body: JSON.stringify({ type: 'contact', payload: formData }),
+      }).catch((err) => console.error('Contact notification error:', err));
 
       setSubmitStatus('success');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    } catch (error) {
+    } catch {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Get contact details from CMS settings
-  const contactEmail = getSetting('contact_email') || 'hello@theperfumeempire.com';
-  const contactPhone = getSetting('contact_phone') || '0553967658';
-  const contactWhatsapp = getSetting('contact_whatsapp') || '0553967658';
-  const contactAddress = getSetting('contact_address') || 'East Legon, near America House';
-
-  const heroTitle = pageContent?.title || 'Get In Touch';
-  const heroSubtitle = pageContent?.subtitle || 'Have a question or need assistance?';
-  const heroContent = pageContent?.content || 'Our friendly team is here to help. Reach out through any of our contact channels.';
-
-  const waNumber = contactWhatsapp.replace(/[^0-9]/g, '');
-  const waLink = waNumber.startsWith('0') ? `https://wa.me/233${waNumber.slice(1)}` : `https://wa.me/${waNumber}`;
-  const telNumber = contactPhone.replace(/\s/g, '');
-  const telLink = telNumber.startsWith('0') ? `tel:+233${telNumber.slice(1)}` : `tel:${telNumber}`;
-
-  const contactMethods = [
-    {
-      icon: 'ri-phone-line',
-      title: 'Call Us',
-      value: contactPhone,
-      link: telLink,
-      description: 'Mon-Fri, 8am-6pm GMT'
-    },
-    {
-      icon: 'ri-mail-line',
-      title: 'Email Us',
-      value: contactEmail,
-      link: `mailto:${contactEmail}`,
-      description: 'We respond within 24 hours'
-    },
-    {
-      icon: 'ri-whatsapp-line',
-      title: 'WhatsApp',
-      value: contactWhatsapp,
-      link: waLink,
-      description: 'Chat with us instantly'
-    },
-    {
-      icon: 'ri-map-pin-line',
-      title: 'Visit Us',
-      value: contactAddress,
-      link: 'https://maps.google.com',
-      description: 'East Legon, near America House'
-    }
-  ];
-
-  const faqs = [
-    {
-      question: 'What are your delivery times?',
-      answer: 'Standard delivery takes 2-5 business days within Ghana. Express delivery is available for Accra and Kumasi. We ship perfumes and fragrances with care.'
-    },
-    {
-      question: 'Do you offer international shipping?',
-      answer: 'Currently, we ship within Ghana only. We handle all logistics so you simply order and receive your perfumes.'
-    },
-    {
-      question: 'What payment methods do you accept?',
-      answer: 'We accept MOMO, Instant Bank Transfer, Cash (in store only), and Visa Card. Please note we do not accept payment on delivery.'
-    }
-  ];
+  const setField = (key: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [key]: e.target.value });
+  };
 
   return (
     <div className="min-h-screen bg-white">
-      <PageHero
-        title="Get In Touch"
-        subtitle="Have a question or need assistance? We're here to help from East Legon, near America House."
-        backgroundImage="/Whisk_835b10a10eab0caa2c7419d4a6e01102dr.jpeg"
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {contactMethods.map((method, index) => (
+      <section className="relative min-h-[60svh] overflow-hidden bg-ink">
+        <Image
+          src="/Whisk_835b10a10eab0caa2c7419d4a6e01102dr.jpeg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/25" />
+        <div className="relative min-h-[60svh] max-w-7xl mx-auto px-4 sm:px-6 flex flex-col justify-end pb-14 md:pb-20 pt-28">
+          <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-gold">
+            East Legon · Accra
+          </p>
+          <h1 className="mt-4 max-w-3xl font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight text-white text-balance">
+            Come to the counter.
+          </h1>
+          <p className="mt-5 max-w-lg text-base md:text-lg leading-relaxed text-white/80 text-pretty">
+            WhatsApp {displayWa}, walk in near America House, or write from here. Same shop either way.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
             <a
-              key={index}
-              href={method.link}
-              target={method.link.startsWith('http') ? '_blank' : '_self'}
-              rel={method.link.startsWith('http') ? 'noopener noreferrer' : ''}
-              className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg hover:border-blue-200 transition-all cursor-pointer"
+              href={waHref(whatsapp)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-gold-light transition-colors"
             >
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <i className={`${method.icon} text-2xl text-blue-700`}></i>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">{method.title}</h3>
-              <p className="text-blue-700 font-medium mb-1">{method.value}</p>
-              <p className="text-sm text-gray-500">{method.description}</p>
+              <i className="ri-whatsapp-line" />
+              WhatsApp {displayWa}
             </a>
-          ))}
+            <a
+              href={maps}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/35 px-5 py-2.5 text-sm font-semibold text-white hover:border-gold hover:text-gold transition-colors"
+            >
+              Directions
+            </a>
+          </div>
         </div>
+      </section>
 
-
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-            <p className="text-gray-600 mb-8">
-              Fill out the form below and we'll get back to you as soon as possible.
+      <section className="bg-white py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mb-10 md:mb-12">
+            <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-brand">
+              Reach us
             </p>
+            <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.12] tracking-tight text-ink">
+              The shop line.
+            </h2>
+            <p className="mt-4 text-neutral-600 leading-relaxed">
+              WhatsApp is the desk. Call if you prefer a voice. Come smell a bottle if you are nearby.
+            </p>
+          </div>
 
-            <form id="contactForm" onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
+          <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+            {channels.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
+                className="group flex flex-col justify-between min-h-[168px] rounded-[1.5rem] border border-cream-dark bg-cream px-6 py-6 hover:border-brand/30 hover:bg-cream-dark transition-colors"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-gold-dark">
+                    {item.label}
+                  </p>
+                  <i className="ri-arrow-right-up-line text-neutral-400 group-hover:text-brand" />
+                </div>
+                <div>
+                  <p className="text-lg md:text-xl font-semibold tracking-tight text-ink group-hover:text-brand transition-colors">
+                    {item.value}
+                  </p>
+                  <p className="mt-2 text-sm text-neutral-500 leading-relaxed">{item.note}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-start">
+          <div>
+            <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-gold-dark">
+              Write
+            </p>
+            <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.12] tracking-tight text-ink text-balance">
+              Leave a note for the shop.
+            </h2>
+            <p className="mt-4 text-neutral-600 leading-relaxed">
+              Wholesale lists, a scent you already wear, or a bottle you want sent. If you need it today, WhatsApp is quicker.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="rounded-[1.75rem] bg-white border border-cream-dark p-6 md:p-8 space-y-5">
+            <div className="grid sm:grid-cols-2 gap-5">
+              <label className="block">
+                <span className="block text-sm font-medium text-ink mb-2">Name</span>
                 <input
                   type="text"
-                  id="name"
                   name="name"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="John Doe"
+                  onChange={setField('name')}
+                  className={FIELD}
+                  placeholder="Your name"
                 />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
+              </label>
+              <label className="block">
+                <span className="block text-sm font-medium text-ink mb-2">Phone</span>
                 <input
                   type="tel"
-                  id="phone"
                   name="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="+233 XX XXX XXXX"
+                  onChange={setField('phone')}
+                  className={FIELD}
+                  placeholder="055 396 7658"
                 />
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  required
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="Order inquiry, product question, etc."
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={6}
-                  maxLength={500}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                  placeholder="Tell us how we can help you..."
-                ></textarea>
-                <p className="text-xs text-gray-500 mt-1">{formData.message.length}/500 characters</p>
-              </div>
-
-              {submitStatus === 'success' && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl">
-                  <i className="ri-check-line mr-2"></i>
-                  Message sent successfully! We'll respond within 24 hours.
-                </div>
-              )}
-
-              {submitStatus === 'error' && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
-                  <i className="ri-error-warning-line mr-2"></i>
-                  Failed to send message. Please try again or contact us directly.
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting || verifying}
-                className="w-full bg-blue-700 text-white py-4 rounded-xl font-medium hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
-              >
-                {isSubmitting || verifying ? (verifying ? 'Verifying...' : 'Sending...') : 'Send Message'}
-              </button>
-            </form>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Quick Answers</h2>
-            <p className="text-gray-600 mb-8">
-              Find answers to common questions before reaching out
-            </p>
-
-            <div className="space-y-4 mb-12">
-              {faqs.map((faq, index) => (
-                <details key={index} className="bg-gray-50 rounded-xl overflow-hidden">
-                  <summary className="px-6 py-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100 transition-colors">
-                    {faq.question}
-                  </summary>
-                  <div className="px-6 pb-4 text-gray-600 leading-relaxed">
-                    {faq.answer}
-                  </div>
-                </details>
-              ))}
+              </label>
             </div>
+            <label className="block">
+              <span className="block text-sm font-medium text-ink mb-2">Email</span>
+              <input
+                type="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={setField('email')}
+                className={FIELD}
+                placeholder="you@email.com"
+              />
+            </label>
+            <label className="block">
+              <span className="block text-sm font-medium text-ink mb-2">Subject</span>
+              <input
+                type="text"
+                name="subject"
+                required
+                value={formData.subject}
+                onChange={setField('subject')}
+                className={FIELD}
+                placeholder="Wholesale, a bottle, or a delivery"
+              />
+            </label>
+            <label className="block">
+              <span className="block text-sm font-medium text-ink mb-2">Message</span>
+              <textarea
+                name="message"
+                required
+                rows={6}
+                maxLength={500}
+                value={formData.message}
+                onChange={setField('message')}
+                className={`${FIELD} resize-none`}
+                placeholder="What do you need from the shop?"
+              />
+              <span className="mt-1 block text-xs text-neutral-400">{formData.message.length}/500</span>
+            </label>
 
-            <div className="bg-gradient-to-br from-blue-700 to-blue-900 p-8 rounded-2xl text-white">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-4">
-                <i className="ri-customer-service-2-line text-2xl"></i>
-              </div>
-              <h3 className="text-2xl font-bold mb-3">Need Immediate Help?</h3>
-              <p className="text-blue-100 mb-6 leading-relaxed">
-                Our customer support team is available Monday to Friday, 8am-6pm GMT. For urgent matters, reach out via WhatsApp.
+            {submitStatus === 'success' && (
+              <p className="rounded-xl bg-brand-muted border border-brand/15 px-4 py-3 text-sm text-brand">
+                Received. We will reply from the shop — WhatsApp us if it is urgent.
               </p>
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white text-blue-700 px-6 py-3 rounded-full font-medium hover:bg-blue-50 transition-colors whitespace-nowrap"
-              >
-                <i className="ri-whatsapp-line text-xl"></i>
-                Chat on WhatsApp
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+            )}
+            {submitStatus === 'error' && (
+              <p className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-700">
+                The note did not send. WhatsApp {displayWa} instead.
+              </p>
+            )}
 
-      <div className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Visit Our Store</h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
-              Prefer to shop in person? Visit our store. Our knowledgeable staff will be happy to assist you with product selection and answer any questions.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-gray-600">
-              <div className="flex items-center gap-2">
-                <i className="ri-map-pin-2-line text-blue-700"></i>
-                <span>{contactAddress}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <i className="ri-time-line text-blue-700"></i>
-                <span>Mon-Sat: 9am-6pm</span>
-              </div>
-            </div>
-          </div>
+            <button
+              type="submit"
+              disabled={isSubmitting || verifying}
+              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto rounded-full bg-brand text-white px-7 py-3 text-sm font-semibold hover:bg-brand-light transition-colors disabled:opacity-50"
+            >
+              {isSubmitting || verifying ? 'Sending…' : 'Send to the shop'}
+              <i className="ri-arrow-right-line" />
+            </button>
+          </form>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

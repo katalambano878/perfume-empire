@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '@/lib/supabase';
 
 interface SiteSettings {
     site_name: string;
@@ -112,8 +111,8 @@ export function CMSProvider({ children }: { children: ReactNode }) {
         social_tiktok: 'https://tiktok.com/@Theperfume_empire',
         social_snapchat: 'https://snapchat.com/add/Perfume_Empire',
         social_youtube: '',
-        primary_color: '#2563eb',
-        secondary_color: '#FBF6F2',
+        primary_color: '#0d3b2e',
+        secondary_color: '#f4efe6',
         currency: 'GHS',
         currency_symbol: 'GH₵',
     });

@@ -51,14 +51,14 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'Bottles' }
           </div>
 
           <div className="p-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="bg-cream border border-cream-dark rounded-lg p-4 mb-6">
               <div className="flex items-start">
                 <div className="w-6 h-6 flex items-center justify-center mr-3">
-                  <i className="ri-information-line text-xl text-blue-600"></i>
+                  <i className="ri-information-line text-xl text-brand"></i>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-blue-900 mb-2">How to choose a size</h3>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                  <h3 className="font-semibold text-brand-dark mb-2">How to choose a size</h3>
+                  <ul className="text-sm text-brand space-y-1">
                     <li>• Start with 15ml or 30ml if you are trying a new scent</li>
                     <li>• 50ml is the everyday bottle for most customers</li>
                     <li>• 100ml is best value if you already know the fragrance</li>
@@ -102,7 +102,7 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'Bottles' }
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <div className="w-6 h-6 flex items-center justify-center mr-2">
-                    <i className="ri-drop-line text-blue-700"></i>
+                    <i className="ri-drop-line text-brand"></i>
                   </div>
                   Application tips
                 </h4>
@@ -117,7 +117,7 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'Bottles' }
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <div className="w-6 h-6 flex items-center justify-center mr-2">
-                    <i className="ri-question-line text-blue-700"></i>
+                    <i className="ri-question-line text-brand"></i>
                   </div>
                   Need help?
                 </h4>
@@ -134,7 +134,7 @@ export default function SizeGuideModal({ isOpen, onClose, category = 'Bottles' }
               <p className="text-sm text-gray-600 mb-4">
                 Still not sure which size to buy? Our team can help you choose.
               </p>
-              <button className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors whitespace-nowrap">
+              <button className="px-6 py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand-dark transition-colors whitespace-nowrap">
                 Contact Support
               </button>
             </div>

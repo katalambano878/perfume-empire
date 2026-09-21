@@ -29,13 +29,13 @@ export default function PWASplash() {
     <div className="pwa-splash" aria-hidden="true">
       <div className="pwa-splash-logo mb-6">
         <img
-          src="/logo.png"
+          src="/logo-mark.png"
           alt="The Perfume Empire"
-          className="w-32 h-32 object-contain brightness-0 invert"
+          className="w-32 h-32 object-contain"
         />
       </div>
       <h1 className="text-white text-xl font-bold font-serif mb-2">The Perfume Empire</h1>
-      <p className="text-blue-200 text-sm font-medium mb-8">Quality Products & Supplies</p>
+      <p className="text-gold text-sm font-medium mb-8">East Legon · Wholesale & retail</p>
       <div className="pwa-splash-dots flex gap-1.5">
         <span className="w-2 h-2 bg-white rounded-full" />
         <span className="w-2 h-2 bg-white rounded-full" />

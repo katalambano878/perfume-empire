@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 interface PageHeroProps {
     title: string;
@@ -7,42 +6,18 @@ interface PageHeroProps {
     backgroundImage?: string;
 }
 
-export default function PageHero({ title, subtitle, backgroundImage }: PageHeroProps) {
+export default function PageHero({ title, subtitle }: PageHeroProps) {
     return (
-        <div className={`relative overflow-hidden flex items-center justify-center min-h-[60vh] ${!backgroundImage ? 'bg-blue-900' : ''}`}>
-            {backgroundImage ? (
-                <>
-                    <Image
-                        src={backgroundImage}
-                        alt={title}
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="100vw"
-                        quality={80}
-                    />
-                    <div className="absolute inset-0 bg-black/50"></div>
-                </>
-            ) : (
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                </div>
-            )}
-
-            <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center z-10 flex flex-col items-center">
-                {/* Optional Tag - adding structure for future use or decorative line */}
-                <div className="mb-6 overflow-hidden">
-                    <span className="inline-block py-1 px-4 text-white/90 text-sm md:text-base tracking-[0.3em] uppercase font-semibold border border-white/20 rounded-full backdrop-blur-md bg-white/5 animate-in slide-in-from-bottom-3 duration-700">
-                        {title.split(' ')[0]} Collection
-                    </span>
-                </div>
-
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic font-medium text-white mb-8 leading-[1.1] drop-shadow-2xl animate-in slide-in-from-bottom-4 duration-700 delay-100">
+        <div className="bg-cream border-b border-neutral-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-16 text-center">
+                <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-brand mb-3">
+                    The Perfume Empire
+                </p>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-neutral-900">
                     {title}
                 </h1>
-
                 {subtitle && (
-                    <p className="text-lg md:text-2xl text-blue-50/90 max-w-2xl mx-auto leading-relaxed font-light drop-shadow-lg animate-in slide-in-from-bottom-5 duration-700 delay-200">
+                    <p className="mt-3 text-neutral-600 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
                         {subtitle}
                     </p>
                 )}

@@ -2,35 +2,27 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { SITE, seoOrigin } from "@/lib/site";
+import { organizationJsonLd, localBusinessJsonLd, websiteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#2563eb',
+  themeColor: '#0a1612',
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://theperfumeempire.com';
+const siteUrl = seoOrigin();
 
-// Favicon: favicon folder assets in public; OG image: logo.png
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "The Perfume Empire | Premium Fragrances, East Legon",
-    template: "%s | The Perfume Empire"
+    default: `${SITE.name} | Perfumes in East Legon, Accra`,
+    template: `%s | ${SITE.name}`
   },
-  description: "Premium fragrances at East Legon, near America House. Wholesale & retail. 055 396 7658. Instagram @Theperfumempire · TikTok @Theperfume_empire.",
-  keywords: [
-    "The Perfume Empire",
-    "perfumes Ghana",
-    "East Legon perfumes",
-    "wholesale fragrances Accra",
-    "retail perfumes",
-    "America House",
-    "fragrance Ghana",
-    "Ghana perfumes"
-  ],
+  description: SITE.description,
+  keywords: [...SITE.keywords],
   authors: [{ name: "The Perfume Empire" }],
   creator: "The Perfume Empire",
   publisher: "The Perfume Empire",
@@ -72,31 +64,37 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_GH",
+    locale: SITE.locale,
     url: siteUrl,
-    title: "The Perfume Empire | Premium Fragrances, East Legon",
-    description: "Premium fragrances at East Legon, near America House. Wholesale & retail. 055 396 7658.",
-    siteName: "The Perfume Empire",
+    title: `${SITE.name} | Perfumes in East Legon, Accra`,
+    description: SITE.description,
+    siteName: SITE.name,
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "The Perfume Empire Premium Fragrances",
+        alt: `${SITE.name} — premium fragrances in East Legon`,
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Perfume Empire | Premium Fragrances",
-    description: "Premium fragrances at East Legon. Wholesale & retail. 055 396 7658.",
+    title: `${SITE.name} | Perfumes in East Legon`,
+    description: SITE.description,
     images: ["/logo.png"],
   },
   alternates: {
     canonical: siteUrl,
   },
   category: "shopping",
+  other: {
+    "geo.region": "GH-AA",
+    "geo.placename": "East Legon, Accra",
+    "geo.position": `${SITE.geo.latitude};${SITE.geo.longitude}`,
+    ICBM: `${SITE.geo.latitude}, ${SITE.geo.longitude}`,
+  },
 };
 
 // Google Analytics Measurement ID
@@ -110,15 +108,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang={SITE.language}>
       <head>
+        {process.env.NODE_ENV === 'development' ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){if(sessionStorage.getItem('pe-bust-js')==='v5')return;sessionStorage.setItem('pe-bust-js','v5');try{if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister()})})}if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n)})})}}catch(e){}location.reload();})();`,
+            }}
+          />
+        ) : null}
         {/* PWA Meta Tags */}
-        <meta name="theme-color" content="#2563eb" />
+        <meta name="theme-color" content="#0d3b2e" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="The Perfume Empire" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#2563eb" />
+        <meta name="msapplication-TileColor" content="#0d3b2e" />
         <meta name="msapplication-tap-highlight" content="no" />
 
         {/* Favicon from favicon folder assets */}
@@ -140,32 +145,17 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font -- App Router: fonts loaded in root layout apply to all pages */}
         <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-        {/* Structured Data - Organization */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "The Perfume Empire",
-              "url": siteUrl,
-              "logo": siteUrl + "/logo.png",
-              "description": "Premium fragrances at East Legon, near America House. Wholesale & retail.",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "GH",
-                "addressLocality": "Accra",
-                "streetAddress": "East Legon, near America House"
-              },
-              "telephone": "+233553967658",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "telephone": "+233553967658",
-                "availableLanguage": "English"
-              }
-            })
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
       </head>
 

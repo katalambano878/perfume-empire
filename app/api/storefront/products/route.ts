@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 
 // Simple in-memory cache
 let cache: { data: any; timestamp: number } | null = null;
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        let query = supabaseAdmin
+        let query = db
             .from('products')
             .select(`
                 id, name, slug, price, compare_at_price, quantity, description, metadata,

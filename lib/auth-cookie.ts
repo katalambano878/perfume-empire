@@ -9,13 +9,20 @@ export function authCookieFlags(maxAge: number): string {
 }
 
 export function setAuthCookies(accessToken: string, refreshToken?: string) {
-  document.cookie = `sb-access-token=${accessToken}; ${authCookieFlags(60 * 60 * 24 * 7)}`;
+  const flags = authCookieFlags(60 * 60 * 24 * 7);
+  document.cookie = `pe-access-token=${accessToken}; ${flags}`;
+  document.cookie = `sb-access-token=${accessToken}; ${flags}`;
   if (refreshToken) {
-    document.cookie = `sb-refresh-token=${refreshToken}; ${authCookieFlags(60 * 60 * 24 * 30)}`;
+    const refreshFlags = authCookieFlags(60 * 60 * 24 * 30);
+    document.cookie = `pe-refresh-token=${refreshToken}; ${refreshFlags}`;
+    document.cookie = `sb-refresh-token=${refreshToken}; ${refreshFlags}`;
   }
 }
 
 export function clearAuthCookies() {
-  document.cookie = `sb-access-token=; ${authCookieFlags(0)}`;
-  document.cookie = `sb-refresh-token=; ${authCookieFlags(0)}`;
+  const gone = authCookieFlags(0);
+  document.cookie = `pe-access-token=; ${gone}`;
+  document.cookie = `pe-refresh-token=; ${gone}`;
+  document.cookie = `sb-access-token=; ${gone}`;
+  document.cookie = `sb-refresh-token=; ${gone}`;
 }

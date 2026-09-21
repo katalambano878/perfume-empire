@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'theperfumeempire.store',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'theperfumeempire.com',
         pathname: '/storage/v1/object/public/**',
       },
@@ -53,6 +58,7 @@ const nextConfig: NextConfig = {
   },
   // Security + Caching headers
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
     return [
       {
         source: '/:path*',
@@ -87,12 +93,18 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'public, s-maxage=900, stale-while-revalidate=1800' }
         ]
       },
-      // Cache static assets (JS, CSS, fonts) for 1 year (they have content hashes)
+      // Dev filenames are not content-hashed. Immutable caching kept the old
+      // supabase.ts throw in Chrome after the file was already fixed.
       {
         source: '/_next/static/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
-        ]
+          {
+            key: 'Cache-Control',
+            value: isDev
+              ? 'no-store, must-revalidate'
+              : 'public, max-age=31536000, immutable',
+          },
+        ],
       },
       // Cache optimized images for 30 days
       {

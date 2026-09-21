@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, Fragment } from 'react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db/http-client';
 
 interface SalesStat {
     productId: string;
@@ -47,7 +47,7 @@ export default function ProductSalesStats({ isOpen, onClose }: { isOpen: boolean
 
         try {
             // We fetch order_items and filter by the parent order's created_at
-            let query = supabase
+            let query = db
                 .from('order_items')
                 .select(`
           quantity,
@@ -160,7 +160,7 @@ export default function ProductSalesStats({ isOpen, onClose }: { isOpen: boolean
                             key={p}
                             onClick={() => setPeriod(p)}
                             className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${period === p
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                                    ? 'bg-brand text-white shadow-md shadow-brand-muted'
                                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-transparent'
                                 }`}
                         >
@@ -184,7 +184,7 @@ export default function ProductSalesStats({ isOpen, onClose }: { isOpen: boolean
                             {loading ? (
                                 <tr>
                                     <td colSpan={4} className="p-12 text-center text-gray-500">
-                                        <i className="ri-loader-4-line text-3xl animate-spin text-blue-600 mb-2 block"></i>
+                                        <i className="ri-loader-4-line text-3xl animate-spin text-brand mb-2 block"></i>
                                         Loading sales data...
                                     </td>
                                 </tr>
@@ -203,7 +203,7 @@ export default function ProductSalesStats({ isOpen, onClose }: { isOpen: boolean
                                         return (
                                     <>
                                     <tr 
-                                        className={`hover:bg-blue-50/30 transition-colors ${hasVariants ? 'cursor-pointer' : ''}`}
+                                        className={`hover:bg-cream/30 transition-colors ${hasVariants ? 'cursor-pointer' : ''}`}
                                         onClick={() => hasVariants && setExpandedProduct(expandedProduct === s.productId ? null : s.productId)}
                                     >
                                         <td className="p-4 pl-6 font-medium text-gray-900">
@@ -222,12 +222,12 @@ export default function ProductSalesStats({ isOpen, onClose }: { isOpen: boolean
                                             </div>
                                         </td>
                                         <td className="p-4 text-center">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-muted text-brand">
                                                 {s.ordersCount}
                                             </span>
                                         </td>
                                         <td className="p-4 text-center">
-                                            <span className="font-bold text-blue-700 text-base">{s.itemsSold}</span>
+                                            <span className="font-bold text-brand text-base">{s.itemsSold}</span>
                                         </td>
                                         <td className="p-4 text-right pr-6 text-gray-600 font-mono">
                                             {s.totalRevenue > 0 ? s.totalRevenue.toLocaleString() : '-'}

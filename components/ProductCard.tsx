@@ -5,6 +5,7 @@ import Link from 'next/link';
 import LazyImage from './LazyImage';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { resolveProductImage } from '@/lib/product-image';
 
 // Map common color names to hex values for swatches
 const COLOR_MAP: Record<string, string> = {
@@ -81,6 +82,7 @@ export default function ProductCard({
   const wishlist = useWishlist();
   const [activeColor, setActiveColor] = useState<string | null>(null);
   const [hoverScent, setHoverScent] = useState(false);
+  const displayImage = resolveProductImage(image);
   const displayPrice = hasVariants && minVariantPrice ? minVariantPrice : price;
   const discount = originalPrice ? Math.round((1 - displayPrice / originalPrice) * 100) : 0;
   const MAX_SWATCHES = 5;
@@ -95,35 +97,36 @@ export default function ProductCard({
     else wishlist?.addToWishlist({ id, name, price, originalPrice, image, rating, reviewCount, badge, inStock, slug });
   };
 
-  return (
-    <div className="group glass-card rounded-[1.5rem] h-full flex flex-col overflow-hidden relative">
-      {/* Soft gradient background mesh behind card */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+  const badgeClass =
+    badge === 'Sale' || discount > 0
+      ? 'bg-brand-accent text-white'
+      : badge === 'Best Seller'
+        ? 'bg-brand text-white'
+        : 'bg-neutral-900 text-white';
 
+  return (
+    <div className="group bg-white rounded-2xl h-full flex flex-col overflow-hidden border border-neutral-100 hover:border-neutral-200 hover:shadow-[0_12px_36px_rgba(15,23,42,0.08)] transition-[border-color,box-shadow] duration-200">
       <Link
         href={`/product/${slug}`}
-        className="relative block aspect-[3/4] overflow-hidden bg-neutral-100/50 mb-4 rounded-t-[1.5rem]"
+        className="relative block aspect-square overflow-hidden bg-cream"
         onMouseEnter={() => setHoverScent(true)}
         onMouseLeave={() => setHoverScent(false)}
       >
         <LazyImage
-          src={image}
+          src={displayImage}
           alt={name}
-          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1200ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+          className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
         />
 
-        {/* Glassmorphic overlay gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
-
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-          {badge && (
-            <span className="bg-white/80 backdrop-blur-md text-neutral-900 border border-white/40 text-[9px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full shadow-sm">
-              {badge}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+          {discount > 0 && (
+            <span className="bg-brand-accent text-white text-[10px] uppercase tracking-wide font-bold px-2.5 py-1 rounded-full">
+              Sale
             </span>
           )}
-          {discount > 0 && (
-            <span className="bg-rose-500/90 backdrop-blur-md text-white border border-rose-400/50 text-[9px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full shadow-sm">
-              -{discount}%
+          {badge && discount === 0 && (
+            <span className={`${badgeClass} text-[10px] uppercase tracking-wide font-bold px-2.5 py-1 rounded-full`}>
+              {badge}
             </span>
           )}
         </div>
@@ -131,10 +134,10 @@ export default function ProductCard({
         <button
           type="button"
           onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md flex items-center justify-center shadow-sm border border-white/50 text-neutral-600 hover:bg-white hover:text-rose-500 hover:border-white hover:shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 md:translate-x-2 md:group-hover:translate-x-0"
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-neutral-500 hover:text-rose-500 transition-colors"
           aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <i className={isWishlisted ? 'ri-heart-fill text-rose-500' : 'ri-heart-line text-lg'} />
+          <i className={isWishlisted ? 'ri-heart-fill text-rose-500' : 'ri-heart-line'} />
         </button>
 
         {scentNotes && (
@@ -152,41 +155,32 @@ export default function ProductCard({
           </div>
         )}
 
-        {inStock && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-[120%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hidden lg:block z-20">
-            {hasVariants ? (
-              <span className="w-full bg-white/90 backdrop-blur-md text-neutral-900 py-3 rounded-full font-semibold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 flex items-center justify-center gap-2 text-xs uppercase tracking-widest hover:bg-white transition-colors">
-                <i className="ri-list-check text-base" />
-                <span>Select Options</span>
-              </span>
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
-                }}
-                className="w-full bg-neutral-900/90 backdrop-blur-md text-white hover:bg-black py-3 rounded-full font-semibold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 transition-colors flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
-              >
-                <i className="ri-shopping-cart-2-line text-base" />
-                <span>{moq > 1 ? `Add ${moq} to Cart` : 'Quick Add'}</span>
-              </button>
-            )}
-          </div>
-        )}
       </Link>
 
-      <div className="flex flex-col flex-grow px-5 pb-5 relative z-10">
+      <div className="flex flex-col flex-grow px-4 pb-4 pt-3 relative z-10">
         <Link href={`/product/${slug}`}>
-          <h3 className="font-serif text-[1.1rem] leading-snug text-neutral-900 mb-1.5 group-hover:text-neutral-600 transition-colors line-clamp-2">
+          <h3 className="text-[15px] font-semibold leading-snug text-neutral-900 mb-1.5 group-hover:text-brand transition-colors line-clamp-2 text-pretty">
             {name}
           </h3>
         </Link>
 
+        <div className="flex items-baseline gap-2 mb-1.5">
+          {hasVariants && minVariantPrice ? (
+            <span className="text-neutral-900 font-semibold tabular-nums text-sm">From {formatPrice(minVariantPrice)}</span>
+          ) : (
+            <span className={`font-semibold tabular-nums text-sm ${discount > 0 ? 'text-brand-accent' : 'text-neutral-900'}`}>{formatPrice(price)}</span>
+          )}
+          {originalPrice && (
+            <span className="text-xs text-neutral-400 line-through tabular-nums">{formatPrice(originalPrice)}</span>
+          )}
+        </div>
+
         {(rating > 0 || reviewCount > 0) && (
-          <div className="flex items-center gap-1.5 mb-2.5 text-neutral-400">
-            <span className="text-amber-400 text-sm">★</span>
-            <span className="text-xs font-medium text-neutral-600">{Number(rating).toFixed(1)}</span>
-            {reviewCount > 0 && <span className="text-[11px] text-neutral-400">({reviewCount})</span>}
+          <div className="flex items-center gap-1 mb-3 text-amber-400 text-xs">
+            {'★★★★★'.slice(0, Math.round(Number(rating) || 5)).padEnd(5, '☆').split('').map((s, i) => (
+              <span key={i}>{s === '★' ? '★' : '☆'}</span>
+            ))}
+            {reviewCount > 0 && <span className="text-neutral-400 ml-1">({reviewCount})</span>}
           </div>
         )}
 
@@ -212,36 +206,26 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="flex items-baseline gap-2.5 mb-2 mt-auto">
-          {hasVariants && minVariantPrice ? (
-            <span className="text-neutral-900 font-semibold tracking-tight text-[15px]">From {formatPrice(minVariantPrice)}</span>
-          ) : (
-            <span className="text-neutral-900 font-semibold tracking-tight text-[15px]">{formatPrice(price)}</span>
-          )}
-          {originalPrice && (
-            <span className="text-xs text-neutral-400 line-through decoration-neutral-300 font-medium">{formatPrice(originalPrice)}</span>
-          )}
-        </div>
-
-        <div className="mt-4 pt-3 border-t border-neutral-200/60 lg:hidden">
+        <div className="mt-auto pt-1">
           {hasVariants ? (
             <Link
               href={`/product/${slug}`}
-              className="w-full bg-white/80 border border-neutral-200/80 text-neutral-900 py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-neutral-50 active:bg-neutral-100 transition-colors flex items-center justify-center space-x-1.5 shadow-sm"
+              className="w-full border border-neutral-200 text-neutral-900 py-2.5 rounded-full text-xs font-semibold hover:border-brand hover:text-brand transition-colors flex items-center justify-center gap-1.5"
             >
-              <i className="ri-list-check text-sm" />
-              <span>Select Options</span>
+              <i className="ri-shopping-cart-2-line text-sm" />
+              <span>Select options</span>
             </Link>
           ) : (
             <button
               onClick={(e) => {
                 e.preventDefault();
-                addToCart({ id, name, price, image, quantity: moq, slug, maxStock, moq });
+                addToCart({ id, name, price, image: displayImage, quantity: moq, slug, maxStock, moq });
               }}
               disabled={!inStock}
-              className="w-full bg-neutral-900 text-white py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              className="w-full bg-white border border-neutral-200 text-neutral-900 py-2.5 rounded-full text-xs font-semibold hover:bg-brand hover:text-white hover:border-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
             >
-              {moq > 1 ? `Add ${moq} to Cart` : 'Add to Cart'}
+              <i className="ri-shopping-cart-2-line text-sm" />
+              <span>{inStock ? (moq > 1 ? `Add ${moq} to cart` : 'Add to cart') : 'Out of stock'}</span>
             </button>
           )}
         </div>

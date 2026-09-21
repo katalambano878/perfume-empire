@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase-admin';
+import { db } from './db/server';
 
 /**
  * Shared server-side authentication utilities.
@@ -20,7 +20,7 @@ export function getAuthToken(request: Request): string | null {
     const bearer = authHeader?.replace(/^Bearer\s+/i, '').trim();
     if (bearer) return bearer;
     const cookie = request.headers.get('cookie') ?? '';
-    const match = cookie.match(/\bsb-access-token=([^;]+)/);
+    const match = cookie.match(/\b(?:pe|sb)-access-token=([^;]+)/);
     return match ? decodeURIComponent(match[1].trim()) : null;
 }
 
@@ -39,14 +39,14 @@ export async function verifyAuth(
     }
 
     try {
-        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        const { data: { user }, error } = await db.auth.getUser(token);
 
         if (error || !user) {
             return { authenticated: false, error: 'Invalid or expired token' };
         }
 
         if (options.requireAdmin) {
-            const { data: profile, error: profileError } = await supabaseAdmin
+            const { data: profile, error: profileError } = await db
                 .from('profiles')
                 .select('role')
                 .eq('id', user.id)
@@ -79,13 +79,13 @@ export async function verifyAdminToken(token: string): Promise<AuthResult> {
     }
 
     try {
-        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        const { data: { user }, error } = await db.auth.getUser(token);
 
         if (error || !user) {
             return { authenticated: false, error: 'Invalid or expired token' };
         }
 
-        const { data: profile, error: profileError } = await supabaseAdmin
+        const { data: profile, error: profileError } = await db
             .from('profiles')
             .select('role')
             .eq('id', user.id)

@@ -71,7 +71,7 @@ export default function PWASettingsPage() {
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-800 mb-6 whitespace-nowrap"
+          className="inline-flex items-center gap-2 text-brand hover:text-brand mb-6 whitespace-nowrap"
         >
           <i className="ri-arrow-left-line"></i>
           Back to Home
@@ -85,8 +85,8 @@ export default function PWASettingsPage() {
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <i className="ri-smartphone-line text-blue-700"></i>
+              <div className="w-10 h-10 bg-brand-muted rounded-full flex items-center justify-center">
+                <i className="ri-smartphone-line text-brand"></i>
               </div>
               Installation Status
             </h2>
@@ -141,9 +141,9 @@ export default function PWASettingsPage() {
               </div>
 
               {notificationPermission === 'granted' && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <p className="text-sm text-blue-800 font-medium mb-2">You will receive notifications for:</p>
-                  <ul className="space-y-1 text-sm text-blue-700">
+                <div className="bg-cream border border-cream-dark rounded-xl p-4">
+                  <p className="text-sm text-brand font-medium mb-2">You will receive notifications for:</p>
+                  <ul className="space-y-1 text-sm text-brand">
                     <li className="flex items-center gap-2">
                       <i className="ri-check-line"></i>
                       <span>Order confirmations and updates</span>
@@ -168,8 +168,8 @@ export default function PWASettingsPage() {
 
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                <i className="ri-database-line text-orange-700"></i>
+              <div className="w-10 h-10 bg-brand-muted rounded-full flex items-center justify-center">
+                <i className="ri-database-line text-brand-accent"></i>
               </div>
               Storage & Cache
             </h2>
@@ -183,7 +183,7 @@ export default function PWASettingsPage() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                   <div
-                    className="bg-orange-600 h-full rounded-full transition-all"
+                    className="bg-brand-accent h-full rounded-full transition-all"
                     style={{ width: `${(storageUsage.used / storageUsage.quota) * 100}%` }}
                   ></div>
                 </div>
@@ -229,12 +229,12 @@ export default function PWASettingsPage() {
                 </div>
                 <p className="text-sm text-green-800">Browse cached pages without internet</p>
               </div>
-              <div className="p-4 bg-blue-50 rounded-xl">
+              <div className="p-4 bg-cream rounded-xl">
                 <div className="flex items-center gap-3 mb-2">
-                  <i className="ri-rocket-line text-blue-700 text-xl"></i>
-                  <span className="font-semibold text-blue-900">Fast Loading</span>
+                  <i className="ri-rocket-line text-brand text-xl"></i>
+                  <span className="font-semibold text-brand-dark">Fast Loading</span>
                 </div>
-                <p className="text-sm text-blue-800">Instant page loads with smart caching</p>
+                <p className="text-sm text-brand">Instant page loads with smart caching</p>
               </div>
               <div className="p-4 bg-purple-50 rounded-xl">
                 <div className="flex items-center gap-3 mb-2">
@@ -243,12 +243,12 @@ export default function PWASettingsPage() {
                 </div>
                 <p className="text-sm text-purple-800">Add to home screen like a native app</p>
               </div>
-              <div className="p-4 bg-orange-50 rounded-xl">
+              <div className="p-4 bg-cream rounded-xl">
                 <div className="flex items-center gap-3 mb-2">
-                  <i className="ri-refresh-line text-orange-700 text-xl"></i>
-                  <span className="font-semibold text-orange-900">Auto Updates</span>
+                  <i className="ri-refresh-line text-brand-accent text-xl"></i>
+                  <span className="font-semibold text-brand-accent">Auto Updates</span>
                 </div>
-                <p className="text-sm text-orange-800">Automatic updates in the background</p>
+                <p className="text-sm text-brand-accent">Automatic updates in the background</p>
               </div>
             </div>
           </div>

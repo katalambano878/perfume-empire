@@ -1,25 +1,17 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/request';
-import { createClient } from '@supabase/supabase-js';
+import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const usePlainPg = process.env.NEXT_PUBLIC_USE_PLAIN_PG === 'true';
-
 function extractToken(request: NextRequest): string | undefined {
-    let token = request.cookies.get('sb-access-token')?.value;
-
-    if (!token) {
-        const projectRef = supabaseUrl?.split('//')[1]?.split('.')[0];
-        if (projectRef) {
-            token = request.cookies.get(`sb-${projectRef}-auth-token`)?.value;
-        }
-    }
+    let token = request.cookies.get('pe-access-token')?.value
+        || request.cookies.get('sb-access-token')?.value;
 
     if (!token) {
         for (const [name, cookie] of request.cookies) {
-            if (name.startsWith('sb-') && (name.endsWith('-auth-token') || name.includes('auth'))) {
+            if (
+                (name.startsWith('sb-') || name.startsWith('pe-')) &&
+                (name.endsWith('-auth-token') || name.includes('auth'))
+            ) {
                 try {
                     const parsed = JSON.parse(cookie.value);
                     if (Array.isArray(parsed) && parsed[0]) {
@@ -40,11 +32,8 @@ function extractToken(request: NextRequest): string | undefined {
     return token;
 }
 
-async function verifyPlainPgAdmin(token: string): Promise<{ ok: boolean; userId?: string; role?: string }> {
-    const secret =
-        process.env.AUTH_JWT_SECRET ||
-        process.env.JWT_SECRET ||
-        process.env.SUPABASE_JWT_SECRET;
+async function verifyAdmin(token: string): Promise<{ ok: boolean; userId?: string; role?: string }> {
+    const secret = process.env.AUTH_JWT_SECRET || process.env.JWT_SECRET;
     if (!secret) return { ok: false };
 
     try {
@@ -96,52 +85,16 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(loginUrl);
         }
 
-        if (usePlainPg) {
-            const verified = await verifyPlainPgAdmin(token);
-            if (!verified.ok) {
-                const loginUrl = new URL('/admin/login', request.url);
-                loginUrl.searchParams.set('redirect', pathname);
-                loginUrl.searchParams.set('error', 'session_expired');
-                return NextResponse.redirect(loginUrl);
-            }
-            if (verified.userId) response.headers.set('x-user-id', verified.userId);
-            if (verified.role) response.headers.set('x-user-role', verified.role);
-            return response;
+        const verified = await verifyAdmin(token);
+        if (!verified.ok) {
+            const loginUrl = new URL('/admin/login', request.url);
+            loginUrl.searchParams.set('redirect', pathname);
+            loginUrl.searchParams.set('error', 'session_expired');
+            return NextResponse.redirect(loginUrl);
         }
-
-        if (supabaseServiceKey) {
-            try {
-                const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-                    auth: { autoRefreshToken: false, persistSession: false }
-                });
-
-                const { data: { user }, error } = await supabase.auth.getUser(token);
-
-                if (error || !user) {
-                    const loginUrl = new URL('/admin/login', request.url);
-                    loginUrl.searchParams.set('redirect', pathname);
-                    loginUrl.searchParams.set('error', 'session_expired');
-                    return NextResponse.redirect(loginUrl);
-                }
-
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .single();
-
-                if (!profile || (profile.role !== 'admin' && profile.role !== 'staff')) {
-                    const loginUrl = new URL('/admin/login', request.url);
-                    loginUrl.searchParams.set('error', 'unauthorized');
-                    return NextResponse.redirect(loginUrl);
-                }
-
-                response.headers.set('x-user-id', user.id);
-                response.headers.set('x-user-role', profile.role);
-            } catch (err) {
-                console.error('[Middleware] Auth check error:', err);
-            }
-        }
+        if (verified.userId) response.headers.set('x-user-id', verified.userId);
+        if (verified.role) response.headers.set('x-user-role', verified.role);
+        return response;
     }
 
     if (pathname.startsWith('/api/')) {

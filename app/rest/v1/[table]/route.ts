@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createClient,
   applyPostgrestParams,
-} from "@/lib/db/supabase-compat";
+} from "@/lib/db/query-builder";
 import { isPlainPostgres } from "@/lib/db/mode";
 
 export const dynamic = "force-dynamic";
@@ -104,7 +104,11 @@ export async function POST(
   if (body == null) return jsonError("Invalid JSON body");
 
   const client = createClient();
-  let qb = client.from(table).insert(body);
+  const prefer = req.headers.get("prefer") || "";
+  const onConflict = req.nextUrl.searchParams.get("on_conflict") || undefined;
+  let qb = prefer.includes("resolution=merge-duplicates")
+    ? client.from(table).upsert(body, { onConflict })
+    : client.from(table).insert(body);
   if (preferReturn(req) || preferSingle(req)) {
     qb = qb.select("*") as typeof qb;
   }

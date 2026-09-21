@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db/http-client';
 import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookie';
 
 export default function AdminLayout({
@@ -25,7 +25,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     async function checkAuth() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await db.auth.getSession();
 
       if (pathname === '/admin/login') {
         setIsLoading(false);
@@ -41,7 +41,7 @@ export default function AdminLayout({
       setAuthCookies(session.access_token);
 
       // Check user role from profiles table
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile, error: profileError } = await db
         .from('profiles')
         .select('role')
         .eq('id', session.user.id)
@@ -57,7 +57,7 @@ export default function AdminLayout({
       if (profile.role !== 'admin' && profile.role !== 'staff') {
         console.warn('User does not have admin/staff role');
         clearAuthCookies();
-        await supabase.auth.signOut();
+        await db.auth.signOut();
         router.push('/admin/login?error=unauthorized');
         return;
       }
@@ -71,7 +71,7 @@ export default function AdminLayout({
     checkAuth();
 
     // Keep cookie in sync when session refreshes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = db.auth.onAuthStateChange((event, session) => {
       if (event === 'TOKEN_REFRESHED' && session) {
         setAuthCookies(session.access_token);
       }
@@ -99,7 +99,7 @@ export default function AdminLayout({
   useEffect(() => {
     async function fetchModules() {
       try {
-        const { data, error } = await supabase.from('store_modules').select('id, enabled');
+        const { data, error } = await db.from('store_modules').select('id, enabled');
         if (error) {
           console.warn('Error fetching modules:', error);
           return;
@@ -134,7 +134,7 @@ export default function AdminLayout({
   const handleLogout = async () => {
     // Clear auth cookies set during login
     clearAuthCookies();
-    await supabase.auth.signOut();
+    await db.auth.signOut();
     router.push('/admin/login');
   };
 
@@ -273,7 +273,7 @@ export default function AdminLayout({
                   href={item.path}
                   onClick={() => window.innerWidth < 1024 && setIsSidebarOpen(false)} // Close on mobile click
                   className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors cursor-pointer ${isActive
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
+                    ? 'bg-cream text-brand font-semibold'
                     : 'text-gray-700 hover:bg-gray-50'
                     }`}
                 >
@@ -327,7 +327,7 @@ export default function AdminLayout({
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full font-semibold">
+                  <div className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center bg-brand-muted text-brand rounded-full font-semibold">
                     {user?.email?.charAt(0).toUpperCase() || 'A'}
                   </div>
                   <div className="text-left hidden md:block">

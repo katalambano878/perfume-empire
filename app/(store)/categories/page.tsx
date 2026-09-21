@@ -1,123 +1,164 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
-import PageHero from '@/components/PageHero';
+import Image from 'next/image';
+import { db } from '@/lib/db/server';
+import { STORE_PAGE_SEO } from '@/lib/store-pages';
 
-export const revalidate = 0; // Ensure fresh data on every visit
+export const metadata = STORE_PAGE_SEO.categories;
+export const revalidate = 0;
+
+const COVERS: Record<string, string> = {
+  women: '/Whisk_50c2f050b440b4b95064c372c1ec7ee1dr.jpeg',
+  womens: '/Whisk_50c2f050b440b4b95064c372c1ec7ee1dr.jpeg',
+  men: '/Whisk_a4071984faa45f6b45b4ac8f2119754ddr.jpeg',
+  mens: '/Whisk_a4071984faa45f6b45b4ac8f2119754ddr.jpeg',
+  oud: '/Whisk_4e28dc6bf0d6be98458435c0c2950e3ddr.jpeg',
+  unisex: '/Whisk_6f28ce8873000718f834bc0d63e3bc87dr.jpeg',
+  gift: '/Whisk_a23750058b309cf9155424b5e8ea85dcdr.jpeg',
+  'gift-sets': '/Whisk_a23750058b309cf9155424b5e8ea85dcdr.jpeg',
+};
+
+const NOTES: Record<string, string> = {
+  women: 'Florals, vanilla, rose',
+  womens: 'Florals, vanilla, rose',
+  men: 'Woods, amber, spice',
+  mens: 'Woods, amber, spice',
+  oud: 'Smoke, leather, resin',
+  unisex: 'Citrus, musk, clean',
+  gift: 'Ready to wrap',
+  'gift-sets': 'Ready to wrap',
+};
+
+function coverFor(slug: string, imageUrl?: string | null) {
+  const key = slug.toLowerCase();
+  if (imageUrl && !imageUrl.includes('placeholder') && !imageUrl.includes('/seed/')) {
+    return imageUrl;
+  }
+  if (COVERS[key]) return COVERS[key];
+  const match = Object.entries(COVERS).find(([name]) => key.includes(name));
+  return match?.[1] || '/Whisk_4e28dc6bf0d6be98458435c0c2950e3ddr.jpeg';
+}
+
+function noteFor(slug: string, description?: string | null) {
+  if (description?.trim()) return description.trim();
+  const key = slug.toLowerCase();
+  if (NOTES[key]) return NOTES[key];
+  const match = Object.entries(NOTES).find(([name]) => key.includes(name));
+  return match?.[1] || 'Bottles from the East Legon counter.';
+}
+
+function isStoragePath(src: string) {
+  return src.includes('/storage/v1/') || src.startsWith('/storage/');
+}
 
 export default async function CategoriesPage() {
-  const { data: categoriesData } = await supabase
-    .from('categories')
-    .select(`
-      id,
-      name,
-      slug,
-      description,
-      image_url,
-      position
-    `)
-    .eq('status', 'active')
-    .order('position', { ascending: true });
+  let rows: { id: string; name: string; slug: string; description?: string | null; image_url?: string | null }[] = [];
+  try {
+    const { data, error } = await db
+      .from('categories')
+      .select('id, name, slug, description, image_url')
+      .eq('status', 'active')
+      .order('position', { ascending: true });
+    if (error) {
+      console.error('Categories query failed:', error);
+    } else {
+      rows = data || [];
+    }
+  } catch (error) {
+    console.error('Categories query failed:', error);
+  }
 
-  // Palette to cycle through for visual variety since DB doesn't have colors
-  const palette = [
-    { color: 'from-blue-500 to-blue-700', icon: 'ri-store-2-line' },
-    { color: 'from-blue-500 to-blue-700', icon: 'ri-shopping-bag-3-line' },
-    { color: 'from-purple-500 to-purple-700', icon: 'ri-t-shirt-line' },
-    { color: 'from-amber-500 to-amber-700', icon: 'ri-home-smile-line' },
-    { color: 'from-rose-500 to-rose-700', icon: 'ri-heart-line' },
-    { color: 'from-indigo-500 to-indigo-700', icon: 'ri-star-smile-line' },
-  ];
-
-  const categories = categoriesData?.map((c, i) => {
-    const style = palette[i % palette.length];
-    return {
-      ...c,
-      image: c.image_url || 'https://via.placeholder.com/600x400?text=Category',
-      color: style.color,
-      icon: style.icon,
-      // Optional: Fetch product count if needed, currently skipping for performance/simplicity
-      productCount: 'Browse',
-    };
-  }) || [];
+  const categories = rows.map((c) => ({
+    id: c.id,
+    name: c.name,
+    href: `/shop?category=${c.slug}`,
+    image: coverFor(c.slug, c.image_url),
+    note: noteFor(c.slug, c.description),
+  }));
 
   return (
-    <div className="min-h-screen bg-white">
-      <PageHero
-        title="Shop by Category"
-        subtitle="Browse our perfume categories"
-        backgroundImage="/Whisk_6f28ce8873000718f834bc0d63e3bc87dr.jpeg"
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {categories.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/shop?category=${category.slug}`}
-                className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl transition-all cursor-pointer"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-0 group-hover:opacity-20 transition-opacity`}></div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center`}>
-                      <i className={`${category.icon} text-2xl text-white`}></i>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{category.name}</h3>
-                      <p className="text-sm text-gray-500">Collection</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 leading-relaxed text-sm mb-4 line-clamp-2">
-                    {category.description || 'Explore our exclusive collection in this category.'}
-                  </p>
-                  <div className="flex items-center text-blue-700 font-medium text-sm group-hover:gap-2 transition-all">
-                    <span>Browse Collection</span>
-                    <i className="ri-arrow-right-line ml-2"></i>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-gray-50 rounded-xl">
-            <i className="ri-inbox-line text-5xl text-gray-300 mb-4"></i>
-            <p className="text-xl text-gray-500">No categories found.</p>
-          </div>
-        )}
-      </div>
-
-      <div className="bg-gradient-to-br from-blue-700 to-blue-900 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Can't Find What You're Looking For?</h2>
-          <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-            Try our advanced search or contact our team for personalised product recommendations
+    <div className="min-h-screen bg-cream">
+      <section className="relative min-h-[60svh] overflow-hidden bg-ink">
+        <Image
+          src="/Whisk_6f28ce8873000718f834bc0d63e3bc87dr.jpeg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/25" />
+        <div className="relative min-h-[60svh] max-w-7xl mx-auto px-4 sm:px-6 flex flex-col justify-end pb-14 md:pb-20 pt-28">
+          <p className="text-[11px] font-semibold tracking-[0.28em] uppercase text-gold">
+            East Legon · Accra
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <h1 className="mt-4 max-w-3xl font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight text-white text-balance">
+            The shelves.
+          </h1>
+          <p className="mt-5 max-w-lg text-base md:text-lg leading-relaxed text-white/80 text-pretty">
+            Start with how you wear it — women, men, oud, gifts. New shelves appear here as the shop adds them.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 bg-white text-blue-700 px-8 py-4 rounded-full font-medium hover:bg-blue-50 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-gold-light transition-colors"
             >
-              <i className="ri-search-line"></i>
-              Search All Products
+              Every bottle
+              <i className="ri-arrow-right-line" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-medium hover:bg-blue-500 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-full border border-white/35 px-5 py-2.5 text-sm font-semibold text-white hover:border-gold hover:text-gold transition-colors"
             >
-              <i className="ri-customer-service-line"></i>
-              Contact Support
+              Visit the shop
             </Link>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="py-14 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          {categories.length === 0 ? (
+            <p className="text-neutral-500 py-12">Categories will appear here once they are added.</p>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={cat.href}
+                  className="group relative block overflow-hidden rounded-[1.35rem] bg-ink aspect-[3/4]"
+                >
+                  {isStoragePath(cat.image) ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                    />
+                  ) : (
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                  )}
+                  <span className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+                    <span className="block h-px w-8 bg-gold mb-3" />
+                    <span className="block font-serif text-2xl md:text-[1.75rem] leading-tight text-white">
+                      {cat.name}
+                    </span>
+                    <span className="mt-1.5 block text-xs md:text-sm text-white/70 line-clamp-2">
+                      {cat.note}
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

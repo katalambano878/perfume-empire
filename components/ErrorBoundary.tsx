@@ -19,6 +19,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    if (error?.message?.includes('Bail out to client-side rendering')) {
+      return { hasError: false, error: null };
+    }
     return { hasError: true, error };
   }
 
@@ -47,7 +50,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                 this.setState({ hasError: false, error: null });
                 window.location.reload();
               }}
-              className="inline-flex items-center px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center px-6 py-3 bg-brand hover:bg-brand-dark text-white rounded-lg font-semibold transition-colors cursor-pointer"
             >
               <i className="ri-refresh-line mr-2"></i>
               Refresh Page

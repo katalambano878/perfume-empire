@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 import { verifyAuth } from '@/lib/auth';
 import { escapeHtml } from '@/lib/sanitize';
 import { sendOrderConfirmation, sendOrderStatusUpdate, sendWelcomeMessage, sendContactMessage, sendPaymentLink, sendEmail, sendSMS, emailLayout } from '@/lib/notifications';
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
             }
 
             const orderRef = payload.order_number || payload.id;
-            const { data: order, error: orderError } = await supabaseAdmin
+            const { data: order, error: orderError } = await db
                 .from('orders')
                 .select('id, order_number, created_at')
                 .or(`order_number.eq.${orderRef},id.eq.${orderRef}`)
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
             }
 
             // Fetch full order data
-            const { data: fullOrder } = await supabaseAdmin
+            const { data: fullOrder } = await db
                 .from('orders')
                 .select('id, order_number, email, phone, shipping_address, metadata')
                 .eq('order_number', orderNumber)

@@ -3,7 +3,7 @@
  * Groups rows by product name only (SKU is auto-generated). Variants use Color × Size (option1=size, option2=color, metadata.color_hex).
  */
 
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/db/server';
 import type { ParsedProductRow } from './csv-parser';
 import { sanitizeHtml } from '@/lib/sanitize';
 
@@ -45,7 +45,7 @@ async function ensureUniqueSlug(baseSlug: string): Promise<string> {
   let slug = baseSlug;
   let n = 1;
   while (true) {
-    const { data } = await supabaseAdmin.from('products').select('id').eq('slug', slug).maybeSingle();
+    const { data } = await db.from('products').select('id').eq('slug', slug).maybeSingle();
     if (!data) return slug;
     slug = `${baseSlug}-${n}`;
     n++;
@@ -64,7 +64,7 @@ export interface CategoryLookup {
 }
 
 export async function buildCategoryLookup(): Promise<CategoryLookup> {
-  const { data: categories, error } = await supabaseAdmin
+  const { data: categories, error } = await db
     .from('categories')
     .select('id, name')
     .eq('status', 'active');
@@ -78,7 +78,7 @@ export async function buildCategoryLookup(): Promise<CategoryLookup> {
 }
 
 export async function getExistingProductNames(): Promise<Set<string>> {
-  const { data, error } = await supabaseAdmin.from('products').select('name');
+  const { data, error } = await db.from('products').select('name');
   if (error) return new Set();
   const set = new Set<string>();
   for (const row of data ?? []) {
@@ -89,7 +89,7 @@ export async function getExistingProductNames(): Promise<Set<string>> {
 
 /** Map lowercase product name -> product id (for update-existing flow). */
 export async function getExistingProductIdsByName(): Promise<Map<string, string>> {
-  const { data, error } = await supabaseAdmin.from('products').select('id, name');
+  const { data, error } = await db.from('products').select('id, name');
   if (error) return new Map();
   const map = new Map<string, string>();
   for (const row of data ?? []) {
@@ -200,7 +200,7 @@ export async function createProductsFromRows(
     if (exists && updateExisting) {
       const existingId = existingIdsByName.get(nameKey);
       if (existingId) {
-        const { error: updateErr } = await supabaseAdmin
+        const { error: updateErr } = await db
           .from('products')
           .update({
             description: productPayload.description,
@@ -227,7 +227,7 @@ export async function createProductsFromRows(
     }
 
     if (!productId) {
-      const { data: inserted, error: insertErr } = await supabaseAdmin
+      const { data: inserted, error: insertErr } = await db
         .from('products')
         .insert(productPayload)
         .select('id')
@@ -250,13 +250,13 @@ export async function createProductsFromRows(
     }
     if (productId && imageUrls.length > 0) {
       if (!updateExisting) {
-        await supabaseAdmin.from('product_images').delete().eq('product_id', productId);
+        await db.from('product_images').delete().eq('product_id', productId);
       }
       const existingPositions = updateExisting
-        ? ((await supabaseAdmin.from('product_images').select('position').eq('product_id', productId).order('position', { ascending: false }).limit(1)).data?.[0]?.position ?? -1)
+        ? ((await db.from('product_images').select('position').eq('product_id', productId).order('position', { ascending: false }).limit(1)).data?.[0]?.position ?? -1)
         : -1;
       const startPos = existingPositions + 1;
-      await supabaseAdmin.from('product_images').insert(
+      await db.from('product_images').insert(
         imageUrls.map((url, pos) => ({
           product_id: productId,
           url,
@@ -268,7 +268,7 @@ export async function createProductsFromRows(
 
     if (hasVariants && productId) {
       if (!updateExisting) {
-        await supabaseAdmin.from('product_variants').delete().eq('product_id', productId);
+        await db.from('product_variants').delete().eq('product_id', productId);
       }
       for (const r of group) {
         const hasVariantData = r.variant_color || r.variant_size || r.variant_price !== undefined || (r.variant_stock !== undefined && r.variant_stock >= 0);
@@ -289,7 +289,7 @@ export async function createProductsFromRows(
           option2: color,
           metadata: colorHex ? { color_hex: colorHex } : {},
         };
-        const { error: varErr } = await supabaseAdmin.from('product_variants').insert(variantPayload);
+        const { error: varErr } = await db.from('product_variants').insert(variantPayload);
         if (!varErr) variantsCreated++;
       }
     }

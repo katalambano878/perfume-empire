@@ -1,4 +1,4 @@
-// Foreign-key map for PostgREST-style embeds in supabase-compat.
+// Foreign-key map for nested embeds in the Postgres query builder.
 // Generated from perfume-empire supabase/migrations (2026-02).
 
 export interface FkEdge {

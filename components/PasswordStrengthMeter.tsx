@@ -68,7 +68,7 @@ export default function PasswordStrengthMeter({ password }: PasswordStrengthMete
 
   const getStrengthColor = () => {
     if (strength < 40) return 'bg-red-500';
-    if (strength < 70) return 'bg-orange-500';
+    if (strength < 70) return 'bg-brand-accent';
     if (strength < 90) return 'bg-yellow-500';
     return 'bg-green-500';
   };
@@ -86,7 +86,7 @@ export default function PasswordStrengthMeter({ password }: PasswordStrengthMete
         </div>
         <span className={`text-xs font-medium ${
           strength < 40 ? 'text-red-600' :
-          strength < 70 ? 'text-orange-600' :
+          strength < 70 ? 'text-brand-accent' :
           strength < 90 ? 'text-yellow-600' :
           'text-green-600'
         }`}>
