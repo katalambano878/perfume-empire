@@ -3,14 +3,14 @@
 export const SITE = {
   name: "The Perfume Empire",
   shortName: "Perfume Empire",
-  domain: "theperfumeempire.store",
-  canonicalUrl: "https://theperfumeempire.store",
+  domain: "tpeperfumes.com",
+  canonicalUrl: "https://tpeperfumes.com",
   tagline: "Premium fragrances in East Legon — wholesale and retail",
   description:
     "Buy authentic designer and niche perfumes in Ghana. The Perfume Empire in East Legon, near America House, supplies wholesale and retail fragrances across Accra. Call or WhatsApp 055 396 7658.",
   keywords: [
     "The Perfume Empire",
-    "theperfumeempire.store",
+    "tpeperfumes.com",
     "perfumes Ghana",
     "buy perfume Accra",
     "East Legon perfume shop",

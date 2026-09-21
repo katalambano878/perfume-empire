@@ -1,4 +1,4 @@
 [variables]
 NIXPACKS_NODE_VERSION = "20"
-NEXT_PUBLIC_APP_URL = "https://perfume-empire.169-58-8-203.sslip.io"
-NEXT_PUBLIC_SEO_CANONICAL_URL = "https://theperfumeempire.store"
+NEXT_PUBLIC_APP_URL = "https://tpeperfumes.com"
+NEXT_PUBLIC_SEO_CANONICAL_URL = "https://tpeperfumes.com"

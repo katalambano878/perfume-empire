@@ -59,7 +59,7 @@ export const STORE_PAGE_SEO = {
   privacy: pageMetadata({
     title: "Privacy Policy",
     description:
-      "How The Perfume Empire collects and protects customer information when you shop perfumes at theperfumeempire.store.",
+      "How The Perfume Empire collects and protects customer information when you shop perfumes at tpeperfumes.com.",
     path: "/privacy",
   }),
   terms: pageMetadata({
