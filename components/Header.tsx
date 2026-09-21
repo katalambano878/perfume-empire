@@ -92,7 +92,7 @@ export default function Header() {
                 </Link>
               </div>
 
-              <div className="hidden lg:flex items-center rounded-full bg-brand-muted p-1">
+              <div className="hidden lg:flex items-center gap-1">
                 {NAV.map((link) => {
                   const active = isActive(link.href);
                   return (
@@ -112,7 +112,7 @@ export default function Header() {
               </div>
 
               <div className="flex items-center justify-end shrink-0 z-10">
-                <div className="flex items-center rounded-full bg-brand-muted px-0.5">
+                <div className="flex items-center">
                   <button type="button" className={iconBtn} onClick={() => setIsSearchOpen(true)} aria-label="Search">
                     <i className="ri-search-line text-[19px]" />
                   </button>
