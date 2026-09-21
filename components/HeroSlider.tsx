@@ -70,7 +70,7 @@ export default function HeroSlider() {
       <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-ink/20" />
 
       <div className="relative min-h-[100svh] max-w-7xl mx-auto px-4 sm:px-6 flex flex-col justify-end pb-20 md:pb-24 pt-32">
-        <p className="text-[11px] md:text-xs font-semibold tracking-[0.28em] uppercase text-gold">
+        <p className="text-[11px] md:text-xs font-semibold tracking-[0.28em] uppercase text-brand">
           {slide.kicker}
         </p>
         <h1 className="mt-4 text-4xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.05] text-balance whitespace-pre-line">
@@ -82,13 +82,13 @@ export default function HeroSlider() {
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             href={slide.href}
-            className="inline-flex items-center gap-2 bg-white text-ink px-6 py-3 rounded-full text-sm font-semibold hover:bg-gold-light transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-white text-ink px-6 py-3 rounded-full text-sm font-semibold hover:bg-brand hover:text-white transition-colors duration-200"
           >
             {slide.cta} <i className="ri-arrow-right-line" />
           </Link>
           <Link
             href="/categories"
-            className="inline-flex items-center gap-2 border border-white/35 text-white px-6 py-3 rounded-full text-sm font-semibold hover:border-gold hover:text-gold transition-colors duration-200"
+            className="inline-flex items-center gap-2 border border-white/35 text-white px-6 py-3 rounded-full text-sm font-semibold hover:border-white hover:bg-white/10 transition-colors duration-200"
           >
             Explore categories
           </Link>
@@ -103,7 +103,7 @@ export default function HeroSlider() {
               }`}
             >
               {i === index && (
-                <span className="absolute inset-0 bg-gold animate-hero-progress" />
+                <span className="absolute inset-0 bg-brand animate-hero-progress" />
               )}
             </span>
           ))}

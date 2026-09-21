@@ -75,7 +75,7 @@ export default function Header() {
     <>
       <AnnouncementBar />
 
-      <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-md border-b border-cream-dark">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
         <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="h-[64px] md:h-[72px] grid grid-cols-[1fr_auto_1fr] items-center gap-4">
               <div className="flex items-center justify-start gap-1 min-w-0">
@@ -92,7 +92,7 @@ export default function Header() {
                 </Link>
               </div>
 
-              <div className="hidden lg:flex items-center rounded-full bg-cream p-1">
+              <div className="hidden lg:flex items-center rounded-full bg-brand-muted p-1">
                 {NAV.map((link) => {
                   const active = isActive(link.href);
                   return (
@@ -101,8 +101,8 @@ export default function Header() {
                       href={link.href}
                       className={`px-4 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors duration-200 ${
                         active
-                          ? 'bg-white text-brand shadow-[0_1px_4px_rgba(15,23,42,0.08)]'
-                          : 'text-neutral-500 hover:text-brand'
+                          ? 'bg-brand text-white shadow-[0_1px_4px_rgba(196,30,58,0.25)]'
+                          : 'text-ink/55 hover:text-brand'
                       }`}
                     >
                       {link.label}
@@ -112,7 +112,7 @@ export default function Header() {
               </div>
 
               <div className="flex items-center justify-end shrink-0 z-10">
-                <div className="flex items-center rounded-full bg-cream px-0.5">
+                <div className="flex items-center rounded-full bg-brand-muted px-0.5">
                   <button type="button" className={iconBtn} onClick={() => setIsSearchOpen(true)} aria-label="Search">
                     <i className="ri-search-line text-[19px]" />
                   </button>

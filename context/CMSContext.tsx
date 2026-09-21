@@ -111,8 +111,8 @@ export function CMSProvider({ children }: { children: ReactNode }) {
         social_tiktok: 'https://tiktok.com/@Theperfume_empire',
         social_snapchat: 'https://snapchat.com/add/Perfume_Empire',
         social_youtube: '',
-        primary_color: '#0d3b2e',
-        secondary_color: '#f4efe6',
+        primary_color: '#c41e3a',
+        secondary_color: '#ffffff',
         currency: 'GHS',
         currency_symbol: 'GH₵',
     });

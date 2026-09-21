@@ -10,25 +10,24 @@ module.exports = {
       },
       colors: {
         brand: {
-          DEFAULT: '#0d3b2e',
-          light: '#165a45',
-          dark: '#08261e',
-          accent: '#7c2d3a',
-          muted: '#d7e8e1',
+          DEFAULT: '#c41e3a',
+          light: '#dc3b54',
+          dark: '#8a1528',
+          accent: '#111111',
+          muted: '#f8d7dc',
         },
         gold: {
-          DEFAULT: '#ccab66',
-          light: '#e8dcc8',
-          dark: '#8f7438',
+          DEFAULT: '#c41e3a',
+          light: '#f8d7dc',
+          dark: '#8a1528',
         },
         cream: {
-          DEFAULT: '#f4efe6',
-          dark: '#eadfd0',
+          DEFAULT: '#ffffff',
+          dark: '#e8e8e8',
         },
-        ink: '#0a1612',
+        ink: '#111111',
       },
     },
   },
   plugins: [],
 }
-

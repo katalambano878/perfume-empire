@@ -10,7 +10,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#0a1612',
+  themeColor: '#c41e3a',
 };
 
 const siteUrl = seoOrigin();
@@ -118,12 +118,12 @@ export default function RootLayout({
           />
         ) : null}
         {/* PWA Meta Tags */}
-        <meta name="theme-color" content="#0d3b2e" />
+        <meta name="theme-color" content="#c41e3a" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="The Perfume Empire" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#0d3b2e" />
+        <meta name="msapplication-TileColor" content="#c41e3a" />
         <meta name="msapplication-tap-highlight" content="no" />
 
         {/* Favicon from favicon folder assets */}

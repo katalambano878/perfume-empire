@@ -21,10 +21,10 @@ export default function Footer() {
     { link: socialFacebook, icon: 'ri-facebook-fill', label: 'Facebook' },
   ].filter((s) => s.link);
 
-  const linkClass = 'text-white/65 hover:text-gold transition-colors text-sm';
+  const linkClass = 'text-white/65 hover:text-brand transition-colors text-sm';
 
   return (
-    <footer className="bg-brand text-white">
+    <footer className="bg-ink text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="col-span-2 md:col-span-1 space-y-4">
@@ -42,7 +42,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-gold hover:text-ink hover:border-gold transition-colors"
+                  className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-brand hover:text-white hover:border-brand transition-colors"
                 >
                   <i className={social.icon} />
                 </a>
@@ -51,7 +51,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gold mb-4">Shopping</h4>
+            <h4 className="text-sm font-semibold text-brand mb-4">Shopping</h4>
             <ul className="space-y-2.5">
               <li><Link href="/shop" className={linkClass}>All products</Link></li>
               <li><Link href="/shop?sort=newest" className={linkClass}>New arrivals</Link></li>
@@ -62,7 +62,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gold mb-4">Customer care</h4>
+            <h4 className="text-sm font-semibold text-brand mb-4">Customer care</h4>
             <ul className="space-y-2.5">
               <li><Link href="/shipping" className={linkClass}>Shipping policy</Link></li>
               <li><Link href="/returns" className={linkClass}>Returns</Link></li>
@@ -73,7 +73,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gold mb-4">About us</h4>
+            <h4 className="text-sm font-semibold text-brand mb-4">About us</h4>
             <ul className="space-y-2.5">
               <li><Link href="/about" className={linkClass}>Our story</Link></li>
               <li><Link href="/privacy" className={linkClass}>Privacy policy</Link></li>

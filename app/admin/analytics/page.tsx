@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
     fetchAnalytics();
   }, [fetchAnalytics]);
 
-  const COLORS = ['#10b981', '#0d3b2e', '#f59e0b', '#ef4444', '#8b5cf6'];
+  const COLORS = ['#c41e3a', '#111111', '#f59e0b', '#8a1528', '#dc3b54'];
 
   return (
     <div className="min-h-screen bg-gray-50">
