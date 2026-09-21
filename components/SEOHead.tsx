@@ -30,7 +30,7 @@ export function generateMetadata({
   path = '/',
 }: SEOProps): Metadata {
   const siteUrl = seoOrigin();
-  const defaultOgImage = absoluteUrl('/logo.png');
+  const defaultOgImage = absoluteUrl('/og.png');
   const resolvedOgImage = ogImage
     ? ogImage.startsWith('http')
       ? ogImage

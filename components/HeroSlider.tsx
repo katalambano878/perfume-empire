@@ -46,7 +46,7 @@ export default function HeroSlider() {
   const slide = SLIDES[index];
 
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-ink">
+    <section className="relative min-h-[68svh] overflow-hidden bg-ink">
       {SLIDES.map((item, i) => (
         <div
           key={item.image}
@@ -69,7 +69,7 @@ export default function HeroSlider() {
       <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/45 to-ink/10" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-ink/20" />
 
-      <div className="relative min-h-[100svh] max-w-7xl mx-auto px-4 sm:px-6 flex flex-col justify-end pb-20 md:pb-24 pt-32">
+      <div className="relative min-h-[68svh] max-w-7xl mx-auto px-4 sm:px-6 flex flex-col justify-end pb-16 md:pb-20 pt-28">
         <p className="text-[11px] md:text-xs font-semibold tracking-[0.28em] uppercase text-brand">
           {slide.kicker}
         </p>

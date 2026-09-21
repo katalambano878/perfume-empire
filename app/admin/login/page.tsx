@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.png" alt="The Perfume Empire" className="h-14 w-auto max-w-[280px] mx-auto object-contain" />
+            <img src="/logo.png" alt="The Perfume Empire" className="h-16 w-auto max-w-[320px] mx-auto object-contain" />
           </Link>
           <h1 className="font-serif text-2xl font-semibold text-gray-900 mt-6 mb-2">Admin</h1>
           <p className="text-gray-500 text-sm font-light">Sign in to access the dashboard</p>

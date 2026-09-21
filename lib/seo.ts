@@ -5,7 +5,7 @@ export function pageMetadata({
   title,
   description,
   path,
-  image = "/logo.png",
+  image = "/og.png",
   keywords = [],
   noindex = false,
   type = "website",

@@ -92,7 +92,7 @@ export default function Header() {
                 </Link>
               </div>
 
-              <div className="hidden lg:flex items-center gap-1">
+              <div className="hidden lg:flex items-center rounded-full bg-brand-muted p-1">
                 {NAV.map((link) => {
                   const active = isActive(link.href);
                   return (
@@ -111,8 +111,8 @@ export default function Header() {
                 })}
               </div>
 
-              <div className="flex items-center justify-end shrink-0 z-10">
-                <div className="flex items-center">
+              <div className="hidden lg:flex items-center justify-end shrink-0 z-10">
+                <div className="flex items-center rounded-full bg-brand-muted px-0.5">
                   <button type="button" className={iconBtn} onClick={() => setIsSearchOpen(true)} aria-label="Search">
                     <i className="ri-search-line text-[19px]" />
                   </button>
@@ -210,6 +210,24 @@ export default function Header() {
                 <i className="ri-close-line text-2xl" />
               </button>
             </div>
+            <form onSubmit={handleSearch} className="px-3 pt-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search fragrances..."
+                  className="w-full px-4 py-3 pr-12 border border-neutral-200 rounded-full focus:ring-2 focus:ring-brand/20 focus:border-brand text-base"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-brand"
+                  aria-label="Search"
+                >
+                  <i className="ri-search-line text-xl" />
+                </button>
+              </div>
+            </form>
             <nav className="flex-1 overflow-y-auto p-3 space-y-1">
               {NAV.map((link) => (
                 <Link

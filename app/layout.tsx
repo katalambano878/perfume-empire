@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     images: [
       {
-        url: "/logo.png",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: `${SITE.name} — premium fragrances in East Legon`,
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE.name} | Perfumes in East Legon`,
     description: SITE.description,
-    images: ["/logo.png"],
+    images: ["/og.png"],
   },
   alternates: {
     canonical: siteUrl,

@@ -29,9 +29,9 @@ export default function PWASplash() {
     <div className="pwa-splash" aria-hidden="true">
       <div className="pwa-splash-logo mb-6">
         <img
-          src="/logo-mark.png"
+          src="/logo.png"
           alt="The Perfume Empire"
-          className="w-32 h-32 object-contain"
+          className="w-64 h-auto object-contain"
         />
       </div>
       <h1 className="text-white text-xl font-bold font-serif mb-2">The Perfume Empire</h1>
