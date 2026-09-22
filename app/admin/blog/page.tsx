@@ -1,361 +1,114 @@
 'use client';
 
-import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { db } from '@/lib/db/http-client';
+
+type Post = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  published_at: string | null;
+  created_at: string;
+};
 
 export default function AdminBlogPage() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const posts = [
-    {
-      id: 1,
-      title: 'How to Choose Your Signature Scent',
-      slug: 'how-to-choose-your-signature-scent',
-      author: 'The Perfume Empire',
-      category: 'Fragrance Tips',
-      image: 'https://readdy.ai/api/search-image?query=luxury%20perfume%20bottles%20on%20marble%20with%20soft%20natural%20light%20fragrance%20editorial&width=600&height=400&seq=blogadm1&orientation=landscape',
-      excerpt: 'A practical guide to finding a fragrance that lasts and feels like you...',
-      status: 'Published',
-      views: 2456,
-      comments: 23,
-      publishDate: 'Dec 15, 2024',
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Oud vs Floral: Understanding Fragrance Families',
-      slug: 'oud-vs-floral-fragrance-families',
-      author: 'The Perfume Empire',
-      category: 'Education',
-      image: 'https://readdy.ai/api/search-image?query=oud%20wood%20and%20rose%20petals%20beside%20perfume%20bottles%20on%20clean%20background&width=600&height=400&seq=blogadm2&orientation=landscape',
-      excerpt: 'Learn the difference between oud, floral, fresh, and oriental scents...',
-      status: 'Published',
-      views: 1892,
-      comments: 18,
-      publishDate: 'Dec 10, 2024',
-      featured: true
-    },
-    {
-      id: 3,
-      title: 'Wholesale Buying Tips for Resellers in Accra',
-      slug: 'wholesale-buying-tips-resellers-accra',
-      author: 'The Perfume Empire',
-      category: 'Wholesale',
-      image: 'https://readdy.ai/api/search-image?query=perfume%20bottles%20arranged%20for%20wholesale%20display%20in%20a%20boutique&width=600&height=400&seq=blogadm3&orientation=landscape',
-      excerpt: 'How to stock the right fragrances for your shop or market stall...',
-      status: 'Published',
-      views: 3124,
-      comments: 31,
-      publishDate: 'Dec 5, 2024',
-      featured: true
-    },
-    {
-      id: 4,
-      title: 'How to Make Perfume Last Longer',
-      slug: 'how-to-make-perfume-last-longer',
-      author: 'The Perfume Empire',
-      category: 'Fragrance Tips',
-      image: 'https://readdy.ai/api/search-image?query=person%20applying%20perfume%20to%20wrist%20soft%20lighting%20editorial&width=600&height=400&seq=blogadm4&orientation=landscape',
-      excerpt: 'Simple application and storage habits that keep your scent on skin longer...',
-      status: 'Draft',
-      views: 0,
-      comments: 0,
-      publishDate: 'Dec 25, 2024',
-      featured: false
-    },
-    {
-      id: 5,
-      title: 'Gift Guide: Fragrances for Every Occasion',
-      slug: 'gift-guide-fragrances-for-every-occasion',
-      author: 'The Perfume Empire',
-      category: 'Gift Ideas',
-      image: 'https://readdy.ai/api/search-image?query=perfume%20gift%20set%20beautifully%20wrapped%20on%20clean%20white%20background&width=600&height=400&seq=blogadm5&orientation=landscape',
-      excerpt: 'Find the right bottle or set for birthdays, weddings, and everyday gifts...',
-      status: 'Scheduled',
-      views: 0,
-      comments: 0,
-      publishDate: 'Dec 22, 2024',
-      featured: false
-    },
-    {
-      id: 6,
-      title: 'Visit Us in East Legon',
-      slug: 'visit-us-in-east-legon',
-      author: 'The Perfume Empire',
-      category: 'Store',
-      image: 'https://readdy.ai/api/search-image?query=perfume%20boutique%20interior%20with%20bottles%20on%20shelves%20warm%20lighting&width=600&height=400&seq=blogadm6&orientation=landscape',
-      excerpt: 'Come smell before you buy at The Perfume Empire, near America House...',
-      status: 'Published',
-      views: 1567,
-      comments: 14,
-      publishDate: 'Nov 28, 2024',
-      featured: false
-    }
-  ];
-
-  const statusColors: any = {
-    'Published': 'bg-brand-muted text-brand',
-    'Draft': 'bg-gray-100 text-gray-700',
-    'Scheduled': 'bg-brand-muted text-brand'
+  const load = async () => {
+    setLoading(true);
+    const { data, error: loadError } = await db
+      .from('blog_posts')
+      .select('id, title, slug, status, published_at, created_at')
+      .order('created_at', { ascending: false });
+    if (loadError) setError(loadError.message || 'Could not load posts');
+    setPosts(data || []);
+    setSelected([]);
+    setLoading(false);
   };
 
-  const handleSelectAll = () => {
-    if (selectedPosts.length === posts.length) {
-      setSelectedPosts([]);
-    } else {
-      setSelectedPosts(posts.map(p => p.id));
-    }
-  };
+  useEffect(() => {
+    load();
+  }, []);
 
-  const handleSelectPost = (postId: number) => {
-    if (selectedPosts.includes(postId)) {
-      setSelectedPosts(selectedPosts.filter(id => id !== postId));
-    } else {
-      setSelectedPosts([...selectedPosts, postId]);
+  const remove = async (ids: string[]) => {
+    if (!ids.length || !confirm(`Delete ${ids.length} post${ids.length > 1 ? 's' : ''}?`)) return;
+    setError('');
+    for (const id of ids) {
+      const { error: deleteError } = await db.from('blog_posts').delete().eq('id', id);
+      if (deleteError) {
+        setError(deleteError.message || 'Could not delete the post');
+        return;
+      }
     }
+    setPosts((current) => current.filter((post) => !ids.includes(post.id)));
+    setSelected([]);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
-          <p className="text-gray-600 mt-1">Create and manage your blog content</p>
-        </div>
-        <Link href="/admin/blog/new" className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap">
-          <i className="ri-add-line mr-2"></i>
-          New Post
-        </Link>
+      <div>
+        <h1 className="text-2xl font-semibold text-ink">Blog</h1>
+        <p className="mt-1 text-sm text-neutral-500">Posts saved in the shop. Delete removes them for good.</p>
       </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
-          <p className="text-sm text-gray-600 mb-1">Total Posts</p>
-          <p className="text-2xl font-bold text-gray-900">{posts.length}</p>
-        </div>
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
-          <p className="text-sm text-gray-600 mb-1">Published</p>
-          <p className="text-2xl font-bold text-brand">{posts.filter(p => p.status === 'Published').length}</p>
-        </div>
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
-          <p className="text-sm text-gray-600 mb-1">Total Views</p>
-          <p className="text-2xl font-bold text-gray-900">{posts.reduce((sum, p) => sum + p.views, 0).toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4">
-          <p className="text-sm text-gray-600 mb-1">Comments</p>
-          <p className="text-2xl font-bold text-brand">{posts.reduce((sum, p) => sum + p.comments, 0)}</p>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand font-medium cursor-pointer">
-                <option>All Status</option>
-                <option>Published</option>
-                <option>Draft</option>
-                <option>Scheduled</option>
-              </select>
-              <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand font-medium cursor-pointer">
-                <option>All Categories</option>
-                <option>Fragrance Tips</option>
-                <option>Education</option>
-                <option>Wholesale</option>
-                <option>Gift Ideas</option>
-              </select>
-              <select className="px-4 py-2 pr-8 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand font-medium cursor-pointer">
-                <option>Sort by Date</option>
-                <option>Sort by Views</option>
-                <option>Sort by Comments</option>
-              </select>
-            </div>
-            <div className="flex border-2 border-gray-300 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`w-10 h-10 flex items-center justify-center transition-colors ${
-                  viewMode === 'grid' ? 'bg-brand text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <i className="ri-grid-line text-xl"></i>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`w-10 h-10 flex items-center justify-center border-l-2 border-gray-300 transition-colors ${
-                  viewMode === 'list' ? 'bg-brand text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <i className="ri-list-check text-xl"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {selectedPosts.length > 0 && (
-          <div className="p-4 bg-cream border-b border-cream-dark flex items-center justify-between">
-            <p className="text-brand font-semibold">
-              {selectedPosts.length} post{selectedPosts.length > 1 ? 's' : ''} selected
-            </p>
-            <div className="flex items-center space-x-2">
-              <button className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-                Publish
-              </button>
-              <button className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-                Draft
-              </button>
-              <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-                Delete
-              </button>
-            </div>
-          </div>
-        )}
-
-        {viewMode === 'grid' ? (
-          <div className="p-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <div key={post.id} className="border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={selectedPosts.includes(post.id)}
-                    onChange={() => handleSelectPost(post.id)}
-                    className="absolute top-3 left-3 w-5 h-5 text-brand border-gray-300 rounded focus:ring-brand cursor-pointer z-10"
-                  />
-                  <div className="aspect-video bg-gray-100 overflow-hidden">
-                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
-                  </div>
-                  {post.featured && (
-                    <span className="absolute top-3 right-3 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
-                      Featured
-                    </span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-brand">{post.category}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColors[post.status]}`}>
-                      {post.status}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.excerpt}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-600 mb-4 pb-4 border-b border-gray-200">
-                    <span className="flex items-center">
-                      <i className="ri-eye-line mr-1"></i>
-                      {post.views}
-                    </span>
-                    <span className="flex items-center">
-                      <i className="ri-chat-3-line mr-1"></i>
-                      {post.comments}
-                    </span>
-                    <span className="whitespace-nowrap">{post.publishDate}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Link
-                      href={`/admin/blog/${post.id}`}
-                      className="flex-1 bg-brand hover:bg-brand-dark text-white py-2 rounded-lg text-sm font-medium text-center transition-colors whitespace-nowrap"
-                    >
-                      Edit Post
-                    </Link>
-                    <button className="w-9 h-9 flex items-center justify-center border-2 border-gray-300 text-gray-700 hover:border-brand hover:text-brand rounded-lg transition-colors">
-                      <i className="ri-eye-line"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {selected.length > 0 && (
+        <button
+          type="button"
+          onClick={() => remove(selected)}
+          className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+        >
+          Delete {selected.length}
+        </button>
+      )}
+      <div className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+        {loading ? (
+          <p className="px-5 py-8 text-sm text-neutral-500">Loading posts...</p>
+        ) : posts.length === 0 ? (
+          <p className="px-5 py-8 text-sm text-neutral-500">No posts yet. The old sample titles were not saved, so there is nothing to delete.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="py-4 px-6">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-black/5 text-left text-neutral-500">
+                <th className="px-4 py-3" />
+                <th className="px-4 py-3">Title</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody>
+              {posts.map((post) => (
+                <tr key={post.id} className="border-b border-black/5">
+                  <td className="px-4 py-3">
                     <input
                       type="checkbox"
-                      checked={selectedPosts.length === posts.length}
-                      onChange={handleSelectAll}
-                      className="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand cursor-pointer"
+                      checked={selected.includes(post.id)}
+                      onChange={() =>
+                        setSelected((current) =>
+                          current.includes(post.id) ? current.filter((id) => id !== post.id) : [...current, post.id]
+                        )
+                      }
                     />
-                  </th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Post</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Author</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Category</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Views</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Comments</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Status</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                  </td>
+                  <td className="px-4 py-3 font-medium">{post.title}</td>
+                  <td className="px-4 py-3 capitalize">{post.status}</td>
+                  <td className="px-4 py-3 text-neutral-500">
+                    {new Date(post.published_at || post.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button type="button" onClick={() => remove([post.id])} className="text-red-600 font-semibold">
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {posts.map((post) => (
-                  <tr key={post.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-4 px-6">
-                      <input
-                        type="checkbox"
-                        checked={selectedPosts.includes(post.id)}
-                        onChange={() => handleSelectPost(post.id)}
-                        className="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand cursor-pointer"
-                      />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-20 h-14 bg-gray-100 rounded-lg overflow-hidden">
-                          <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <Link href={`/admin/blog/${post.id}`} className="font-semibold text-gray-900 hover:text-brand">
-                            {post.title}
-                          </Link>
-                          <p className="text-sm text-gray-500 mt-1">{post.publishDate}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">{post.author}</td>
-                    <td className="py-4 px-4 text-gray-700">{post.category}</td>
-                    <td className="py-4 px-4 font-semibold text-gray-900">{post.views}</td>
-                    <td className="py-4 px-4 font-semibold text-gray-900">{post.comments}</td>
-                    <td className="py-4 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${statusColors[post.status]}`}>
-                        {post.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-2">
-                        <Link
-                          href={`/admin/blog/${post.id}`}
-                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-brand hover:bg-cream rounded-lg transition-colors"
-                        >
-                          <i className="ri-edit-line text-lg"></i>
-                        </Link>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-brand hover:bg-cream rounded-lg transition-colors">
-                          <i className="ri-eye-line text-lg"></i>
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                          <i className="ri-delete-bin-line text-lg"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
-
-        <div className="p-6 border-t border-gray-200 flex items-center justify-between">
-          <p className="text-gray-600">Showing {posts.length} posts</p>
-          <div className="flex items-center space-x-2">
-            <button className="w-10 h-10 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-              <i className="ri-arrow-left-s-line text-xl text-gray-600"></i>
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center bg-brand text-white rounded-lg font-semibold">1</button>
-            <button className="w-10 h-10 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-              <i className="ri-arrow-right-s-line text-xl text-gray-600"></i>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -370,7 +370,16 @@ export default function POSPage() {
                 }
 
                 // Success — show completed
-                setCompletedOrder({ id: order.id, orderNumber, total: grandTotal, items: cart });
+                const cashChange = paymentMethod === 'cash'
+                    ? Math.max(0, (parseFloat(amountTendered || '0') || 0) - grandTotal)
+                    : 0;
+                setCompletedOrder({
+                    id: order.id,
+                    orderNumber,
+                    total: grandTotal,
+                    changeDue: cashChange,
+                    items: cart,
+                });
                 setCart([]);
 
                 // Send notification
@@ -674,10 +683,11 @@ export default function POSPage() {
                                     </h2>
                                     <p className="text-gray-500 mt-1">Order #{completedOrder.orderNumber}</p>
 
-                                    {!completedOrder.paymentPending && paymentMethod === 'cash' && changeDue > 0 && (
+                                    {!completedOrder.paymentPending && paymentMethod === 'cash' && (
                                         <div className="mt-3 bg-cream border border-cream-dark rounded-lg p-3">
-                                            <p className="text-sm text-brand">Change Due</p>
-                                            <p className="text-2xl font-bold text-brand">GH₵{changeDue.toFixed(2)}</p>
+                                            <p className="text-sm text-neutral-500">Sale {`GH₵${Number(completedOrder.total || 0).toFixed(2)}`}</p>
+                                            <p className="text-sm text-brand mt-2">Change to give the customer</p>
+                                            <p className="text-2xl font-bold text-brand">GH₵{Number(completedOrder.changeDue || 0).toFixed(2)}</p>
                                         </div>
                                     )}
 
