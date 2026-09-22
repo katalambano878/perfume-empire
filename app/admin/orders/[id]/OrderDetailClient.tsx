@@ -553,6 +553,12 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Method</span>
                   <span className="font-semibold text-gray-900 capitalize">{order.payment_method}</span>
+                  <span className="ml-2 rounded-full bg-ink px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
+                    {order.metadata?.pos_sale || order.metadata?.channel === 'pos' ? 'Shop counter' : 'Online'}
+                  </span>
+                  {order.metadata?.sold_by?.name && (
+                    <span className="ml-2 text-xs text-gray-500">by {order.metadata.sold_by.name}</span>
+                  )}
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Status</span>

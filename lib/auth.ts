@@ -30,7 +30,7 @@ export function getAuthToken(request: Request): string | null {
  */
 export async function verifyAuth(
     request: Request,
-    options: { requireAdmin?: boolean } = {}
+    options: { requireAdmin?: boolean; requireOwner?: boolean } = {}
 ): Promise<AuthResult> {
     const token = getAuthToken(request);
 
@@ -54,6 +54,10 @@ export async function verifyAuth(
 
             if (profileError || !profile) {
                 return { authenticated: false, error: 'Could not verify user role' };
+            }
+
+            if (options.requireOwner && profile.role !== 'admin') {
+                return { authenticated: false, error: 'Only the shop admin can do this' };
             }
 
             if (profile.role !== 'admin' && profile.role !== 'staff') {

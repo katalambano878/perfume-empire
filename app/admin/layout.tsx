@@ -39,6 +39,7 @@ export default function AdminLayout({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [permissions, setPermissions] = useState<string[] | null>(null);
 
   // Module Filtering State
   const [enabledModules, setEnabledModules] = useState<string[]>([]);
@@ -78,14 +79,24 @@ export default function AdminLayout({
         setUserRole(role);
         setIsAuthenticated(true);
         setIsLoading(false);
+        if (userId && sessionStorage.getItem('pe-login-audit') !== userId && token) {
+          sessionStorage.setItem('pe-login-audit', userId);
+          fetch('/api/admin/audit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ action: 'staff.login', entity_type: 'session', details: { email: session?.user?.email || '' } }),
+          }).catch(() => {});
+        }
 
         if (userId) {
           const { data: profile, error: profileError } = await db
             .from('profiles')
-            .select('role')
+            .select('role, preferences')
             .eq('id', userId)
             .maybeSingle();
           if (cancelled || profileError || !profile?.role) return;
+          const allowed = profile.preferences?.permissions;
+          setPermissions(Array.isArray(allowed) ? allowed : []);
           if (profile.role !== 'admin' && profile.role !== 'staff') {
             clearAuthCookies();
             await db.auth.signOut();
@@ -190,47 +201,68 @@ export default function AdminLayout({
       title: 'Orders',
       icon: 'ri-shopping-bag-line',
       path: '/admin/orders',
-      badge: ''
+      badge: '',
+      permission: 'orders'
     },
     {
       title: 'POS System',
       icon: 'ri-store-3-line',
-      path: '/admin/pos'
+      path: '/admin/pos',
+      permission: 'pos'
+    },
+    {
+      title: 'End of day',
+      icon: 'ri-moon-line',
+      path: '/admin/end-of-day',
+      permission: 'end_of_day'
+    },
+    {
+      title: 'Staff',
+      icon: 'ri-shield-user-line',
+      path: '/admin/staff',
+      adminOnly: true
     },
     {
       title: 'Products',
       icon: 'ri-box-3-line',
-      path: '/admin/products'
+      path: '/admin/products',
+      permission: 'products'
     },
     {
       title: 'Categories',
       icon: 'ri-folder-line',
-      path: '/admin/categories'
+      path: '/admin/categories',
+      permission: 'products'
     },
     {
       title: 'Customers',
       icon: 'ri-group-line',
-      path: '/admin/customers'
+      path: '/admin/customers',
+      permission: 'customers'
     },
     {
       title: 'Reviews',
       icon: 'ri-chat-smile-2-line',
-      path: '/admin/reviews'
+      path: '/admin/reviews',
+      adminOnly: true
     },
     {
       title: 'Inventory',
       icon: 'ri-stack-line',
-      path: '/admin/inventory'
+      path: '/admin/inventory',
+      permission: 'inventory'
     },
     {
       title: 'Analytics',
       icon: 'ri-bar-chart-line',
-      path: '/admin/analytics'
+      path: '/admin/analytics',
+      adminOnly: true
     },
     {
       title: 'Coupons',
       icon: 'ri-coupon-2-line',
-      path: '/admin/coupons'
+      path: '/admin/coupons',
+      adminOnly: true
     },
     {
       title: 'Customer Insights',
@@ -247,7 +279,8 @@ export default function AdminLayout({
     {
       title: 'SMS Debugger',
       icon: 'ri-message-2-line',
-      path: '/admin/test-sms'
+      path: '/admin/test-sms',
+      adminOnly: true
     },
 
     {
@@ -259,15 +292,17 @@ export default function AdminLayout({
     {
       title: 'Modules',
       icon: 'ri-puzzle-line',
-      path: '/admin/modules'
+      path: '/admin/modules',
+      adminOnly: true
     },
   ];
 
-  const visibleMenuItems = menuItems.filter(item => {
-    // @ts-ignore
-    if (!item.moduleId) return true;
-    // @ts-ignore
-    return enabledModules.includes(item.moduleId);
+  const visibleMenuItems = menuItems.filter((item: any) => {
+    if (item.moduleId && !enabledModules.includes(item.moduleId)) return false;
+    if (userRole === 'admin') return true;
+    if (item.adminOnly) return false;
+    if (!item.permission) return item.path === '/admin';
+    return (permissions || []).includes(item.permission);
   });
 
   // Special layout for Login Page

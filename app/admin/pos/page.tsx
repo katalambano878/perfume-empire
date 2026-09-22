@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { db } from '@/lib/db/http-client';
+import { resolveProductImage } from '@/lib/product-image';
 
 interface Product {
     id: string;
@@ -39,6 +40,7 @@ export default function POSPage() {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [customerSearch, setCustomerSearch] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('cash');
+    const [discount, setDiscount] = useState('');
     const [amountTendered, setAmountTendered] = useState<string>('');
     const [processing, setProcessing] = useState(false);
     const [completedOrder, setCompletedOrder] = useState<any>(null);
@@ -68,23 +70,27 @@ export default function POSPage() {
         try {
             setLoading(true);
             // Fetch Products
-            const { data: prodData } = await db
-                .from('products')
-                .select(`
-          id, name, price, quantity, sku,
-          categories(name),
-          product_images(url)
-        `)
-                .order('name');
+            const [{ data: prodData }, { data: imageData }, { data: categoryData }] = await Promise.all([
+                db.from('products').select('id, name, price, quantity, sku, status, category_id').order('name'),
+                db.from('product_images').select('product_id, url, position').order('position'),
+                db.from('categories').select('id, name'),
+            ]);
 
             if (prodData) {
-                const formatted: Product[] = prodData.map((p: any) => ({
+                const categoryName = new Map((categoryData || []).map((cat: any) => [cat.id, cat.name]));
+                const imageByProduct = new Map<string, string>();
+                (imageData || []).forEach((image: any) => {
+                    if (!imageByProduct.has(image.product_id)) imageByProduct.set(image.product_id, image.url);
+                });
+                const formatted: Product[] = prodData
+                    .filter((p: any) => !p.status || p.status === 'active')
+                    .map((p: any) => ({
                     id: p.id,
                     name: p.name,
-                    price: p.price,
+                    price: Number(p.price) || 0,
                     quantity: p.quantity,
-                    category: p.categories?.name || 'Uncategorized',
-                    image: p.product_images?.[0]?.url || 'https://via.placeholder.com/150',
+                    category: categoryName.get(p.category_id) || 'Uncategorized',
+                    image: resolveProductImage(imageByProduct.get(p.id)),
                     sku: p.sku
                 }));
                 setProducts(formatted);
@@ -163,8 +169,9 @@ export default function POSPage() {
     }, [customers, customerSearch]);
 
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.cartQuantity), 0);
-    const tax = cartTotal * 0.0;
-    const grandTotal = cartTotal + tax;
+    const discountTotal = Math.min(cartTotal, Math.max(0, parseFloat(discount || '0') || 0));
+    const tax = 0;
+    const grandTotal = Math.max(0, cartTotal - discountTotal);
     const changeDue = amountTendered ? (parseFloat(amountTendered) - grandTotal) : 0;
 
     // Get the customer email and phone for the order
@@ -232,6 +239,12 @@ export default function POSPage() {
             const customerPhone = getOrderPhone();
 
             const isCashOrCard = paymentMethod === 'cash' || paymentMethod === 'card';
+            const { data: { session } } = await db.auth.getSession();
+            const seller = {
+                id: session?.user?.id || null,
+                email: session?.user?.email || null,
+                name: session?.user?.user_metadata?.full_name || session?.user?.email || 'Staff',
+            };
 
             // Build shipping/billing address
             const addressData = selectedCustomer ? {
@@ -268,17 +281,20 @@ export default function POSPage() {
                     subtotal: cartTotal,
                     tax_total: tax,
                     shipping_total: 0,
-                    discount_total: 0,
+                    discount_total: discountTotal,
                     total: grandTotal,
                     shipping_method: deliveryMethod,
                     payment_method: paymentMethod === 'momo' ? 'moolre' : paymentMethod,
                     shipping_address: addressData,
                     billing_address: addressData,
                     metadata: {
+                        channel: 'pos',
                         pos_sale: true,
                         first_name: addressData.firstName,
                         last_name: addressData.lastName,
-                        phone: customerPhone
+                        phone: customerPhone,
+                        discount: discountTotal,
+                        sold_by: seller
                     }
                 }])
                 .select()
@@ -302,6 +318,22 @@ export default function POSPage() {
                 .insert(orderItems);
 
             if (itemsError) throw itemsError;
+
+            if (session?.access_token) {
+                fetch('/api/admin/audit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${session.access_token}`,
+                    },
+                    body: JSON.stringify({
+                        action: 'pos.sale',
+                        entity_type: 'order',
+                        entity_id: order.id,
+                        details: { order_number: orderNumber, total: grandTotal, payment_method: paymentMethod },
+                    }),
+                }).catch(() => {});
+            }
 
             // 3. Upsert Customer Record (email is required in customers table)
             const hasRealEmail = customerEmail && customerEmail !== 'pos-walkin@store.local';
@@ -414,6 +446,7 @@ export default function POSPage() {
         setCustomerSearch('');
         setCheckoutError(null);
         setPaymentMethod('cash');
+        setDiscount('');
         setDeliveryMethod('pickup');
         setGuestDetails({
             firstName: '',
@@ -444,6 +477,15 @@ export default function POSPage() {
                             autoFocus
                         />
                     </div>
+                    <button
+                        type="button"
+                        onClick={() => filteredProducts.forEach((product) => {
+                            if (!cart.some((item) => item.id === product.id)) addToCart(product);
+                        })}
+                        className="px-3 py-2 rounded-full text-sm font-medium bg-ink text-white whitespace-nowrap"
+                    >
+                        Add shown
+                    </button>
                     <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar">
                         {categories.map(cat => (
                             <button
@@ -585,10 +627,17 @@ export default function POSPage() {
                             <span>Subtotal</span>
                             <span>GH₵{cartTotal.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-gray-600">
-                            <span>Tax (0%)</span>
-                            <span>GH₵0.00</span>
-                        </div>
+                        <label className="flex items-center justify-between gap-3 text-gray-600">
+                            <span>Discount</span>
+                            <input
+                                type="number"
+                                min="0"
+                                value={discount}
+                                onChange={(e) => setDiscount(e.target.value)}
+                                placeholder="0"
+                                className="w-24 border border-gray-200 rounded px-2 py-1 text-right"
+                            />
+                        </label>
                         <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t border-gray-200 mt-2">
                             <span>Total</span>
                             <span>GH₵{grandTotal.toFixed(2)}</span>

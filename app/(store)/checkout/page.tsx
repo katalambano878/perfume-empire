@@ -164,6 +164,7 @@ export default function CheckoutPage() {
           shipping_address: shippingData,
           billing_address: shippingData, // Using same for now
           metadata: {
+            channel: 'online',
             guest_checkout: !user,
             first_name: shippingData.firstName,
             last_name: shippingData.lastName,

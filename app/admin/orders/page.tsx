@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/db/http-client';
+import { channelLabel, orderChannel } from '@/lib/admin/commerce';
 import ProductSalesStats from './ProductSalesStats';
 
 interface Order {
@@ -37,6 +38,7 @@ interface OrderStats {
 export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [channelFilter, setChannelFilter] = useState<'all' | 'pos' | 'online'>('all');
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('date');
@@ -319,9 +321,10 @@ export default function AdminOrdersPage() {
       customerName.includes(searchQuery.toLowerCase()) ||
       customerEmail.includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    const matchesChannel = channelFilter === 'all' || orderChannel(order) === channelFilter;
     const matchesProduct = productFilter === 'all' || 
       order.order_items?.some((item: any) => item.product_name === productFilter);
-    return matchesViewTab && matchesSearch && matchesStatus && matchesProduct;
+    return matchesViewTab && matchesSearch && matchesStatus && matchesProduct && matchesChannel;
   });
 
   return (
@@ -373,6 +376,23 @@ export default function AdminOrdersPage() {
           <i className="ri-shopping-cart-2-line mr-2"></i>
           Abandoned Carts ({abandonedCount})
         </button>
+      </div>
+
+      <div className="flex gap-2">
+        {([
+          ['all', 'All sources'],
+          ['online', 'Online'],
+          ['pos', 'Shop counter'],
+        ] as const).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setChannelFilter(value)}
+            className={`px-4 py-2 rounded-full text-sm font-medium ${channelFilter === value ? 'bg-ink text-white' : 'bg-white border border-neutral-200 text-neutral-600'}`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {orderViewTab === 'confirmed' && (
@@ -565,6 +585,9 @@ export default function AdminOrdersPage() {
                       <Link href={`/admin/orders/${order.id}`} className="text-brand hover:text-brand font-semibold whitespace-nowrap cursor-pointer">
                         {order.order_number || order.id.substring(0, 8)}
                       </Link>
+                      <p className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${orderChannel(order) === 'pos' ? 'bg-ink text-white' : 'bg-brand-muted text-brand'}`}>
+                        {channelLabel(orderChannel(order))}
+                      </p>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">

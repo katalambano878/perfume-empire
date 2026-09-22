@@ -181,6 +181,48 @@ export async function signInWithPassword(
   return { session, error: null };
 }
 
+export async function createStaffUser(opts: {
+  email: string;
+  password: string;
+  fullName: string;
+  permissions: string[];
+}): Promise<{ id: string | null; error: string | null }> {
+  const email = opts.email.trim().toLowerCase();
+  if (!email || !opts.password || opts.password.length < 6) {
+    return { id: null, error: "Email and a password of at least 6 characters are required" };
+  }
+  const existing = await query(`SELECT id FROM auth.users WHERE lower(email) = $1 LIMIT 1`, [email]);
+  if (existing.rows[0]) return { id: null, error: "That email is already registered" };
+
+  const id = randomUUID();
+  const hash = bcrypt.hashSync(opts.password, 10);
+  await query(
+    `INSERT INTO auth.users (
+       id, instance_id, aud, role, email, encrypted_password,
+       email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+       created_at, updated_at, confirmation_token, recovery_token,
+       email_change_token_new, email_change
+     ) VALUES (
+       $1, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
+       $2, $3, now(), '{"provider":"email","providers":["email"]}'::jsonb, $4::jsonb,
+       now(), now(), '', '', '', ''
+     )`,
+    [id, email, hash, JSON.stringify({ full_name: opts.fullName })]
+  );
+  await query(
+    `INSERT INTO profiles (id, email, full_name, role, preferences, created_at, updated_at)
+     VALUES ($1, $2, $3, 'staff', $4::jsonb, now(), now())
+     ON CONFLICT (id) DO UPDATE SET
+       role = 'staff',
+       full_name = EXCLUDED.full_name,
+       email = EXCLUDED.email,
+       preferences = EXCLUDED.preferences,
+       updated_at = now()`,
+    [id, email, opts.fullName, JSON.stringify({ permissions: opts.permissions })]
+  );
+  return { id, error: null };
+}
+
 export async function signUpWithPassword(opts: {
   email: string;
   password: string;
