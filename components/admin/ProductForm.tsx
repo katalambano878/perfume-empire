@@ -59,14 +59,16 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         { name: 'Gold', hex: '#D4AF37' },
         { name: 'Silver', hex: '#C0C0C0' },
     ];
-    const sizePresets = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
+    const sizePresets = ['30ml', '50ml', '75ml', '100ml', '150ml', '200ml'];
+    const concentrationPresets = ['EDT', 'EDP', 'Parfum', 'Extrait', 'Attar', 'Oil'];
 
     // Parse existing variants to extract unique colors and sizes
     const existingVariants = (initialData?.product_variants || []).map((v: any) => ({
         ...v,
         stock: v.stock ?? v.quantity ?? 0,
         color: v.color ?? v.option2 ?? '',
-        size: v.name || ''
+        size: v.option1 || v.name || '',
+        concentration: v.option3 || ''
     }));
 
     const [selectedColors, setSelectedColors] = useState<{ name: string; hex: string }[]>(() => {
@@ -91,19 +93,29 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     const [customColorName, setCustomColorName] = useState('');
     const [customColorHex, setCustomColorHex] = useState('#888888');
     const [customSize, setCustomSize] = useState('');
-
-    // Build variants from colors × sizes (or just sizes, or just colors)
-    const buildVariantKey = (color: string, size: string) => `${color}|||${size}`;
-
-    // Store variant data (price, stock) in a map keyed by "color|||size"
-    const [variantData, setVariantData] = useState<Record<string, { price: string; stock: string; sku: string }>>(() => {
-        const data: Record<string, { price: string; stock: string; sku: string }> = {};
+    const [selectedConcentrations, setSelectedConcentrations] = useState<string[]>(() => {
+        const values = new Set<string>();
         existingVariants.forEach((v: any) => {
-            const key = buildVariantKey(v.color || '', v.size || '');
+            if (v.concentration) values.add(v.concentration);
+        });
+        return Array.from(values);
+    });
+    const [customConcentration, setCustomConcentration] = useState('');
+
+    const buildVariantKey = (color: string, size: string, concentration = '') => `${color}|||${size}|||${concentration}`;
+    const blankVariant = () => ({ price: String(price || ''), compare: '', cost: '', stock: '0', sku: '', barcode: '' });
+
+    const [variantData, setVariantData] = useState<Record<string, { price: string; compare: string; cost: string; stock: string; sku: string; barcode: string }>>(() => {
+        const data: Record<string, { price: string; compare: string; cost: string; stock: string; sku: string; barcode: string }> = {};
+        existingVariants.forEach((v: any) => {
+            const key = buildVariantKey(v.color || '', v.size || '', v.concentration || '');
             data[key] = {
                 price: v.price?.toString() || '',
+                compare: v.compare_at_price?.toString() || '',
+                cost: v.cost_per_item?.toString() || '',
                 stock: v.stock?.toString() || '0',
-                sku: v.sku || ''
+                sku: v.sku || '',
+                barcode: v.barcode || ''
             };
         });
         return data;
@@ -111,15 +123,18 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
     // Computed: all variant combinations
     const variantCombinations = (() => {
-        const combos: { color: string; colorHex: string; size: string; key: string }[] = [];
+        const combos: { color: string; colorHex: string; size: string; concentration: string; key: string }[] = [];
         const colors = selectedColors.length > 0 ? selectedColors : [{ name: '', hex: '' }];
         const sizes = selectedSizes.length > 0 ? selectedSizes : [''];
+        const concentrations = selectedConcentrations.length > 0 ? selectedConcentrations : [''];
 
         for (const color of colors) {
             for (const size of sizes) {
-                if (!color.name && !size) continue; // skip if both empty
-                const key = buildVariantKey(color.name, size);
-                combos.push({ color: color.name, colorHex: color.hex, size, key });
+                for (const concentration of concentrations) {
+                    if (!color.name && !size && !concentration) continue;
+                    const key = buildVariantKey(color.name, size, concentration);
+                    combos.push({ color: color.name, colorHex: color.hex, size, concentration, key });
+                }
             }
         }
         return combos;
@@ -127,12 +142,16 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
     // Build the flat variants array for saving (used by handleSubmit)
     const variants = variantCombinations.map(combo => {
-        const d = variantData[combo.key] || { price: price, stock: '0', sku: '' };
+        const d = variantData[combo.key] || blankVariant();
         return {
-            name: combo.size,
+            name: [combo.size, combo.concentration].filter(Boolean).join(' · ') || combo.color || 'Default',
             color: combo.color,
+            concentration: combo.concentration,
             sku: d.sku,
+            barcode: d.barcode,
             price: d.price || price,
+            compare: d.compare,
+            cost: d.cost,
             stock: d.stock || '0'
         };
     });
@@ -140,7 +159,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     const updateVariantField = (key: string, field: string, value: string) => {
         setVariantData(prev => ({
             ...prev,
-            [key]: { ...prev[key] || { price: price, stock: '0', sku: '' }, [field]: value }
+            [key]: { ...(prev[key] || blankVariant()), [field]: value }
         }));
     };
 
@@ -149,7 +168,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         setVariantData(prev => {
             const updated = { ...prev };
             variantCombinations.forEach(combo => {
-                updated[combo.key] = { ...updated[combo.key] || { price: price, stock: '0', sku: '' }, [field]: value };
+                updated[combo.key] = { ...(updated[combo.key] || blankVariant()), [field]: value };
             });
             return updated;
         });
@@ -188,6 +207,17 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
         setCustomSize('');
     };
 
+    const toggleConcentration = (value: string) => {
+        setSelectedConcentrations(prev => prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]);
+    };
+
+    const addCustomConcentration = () => {
+        const value = customConcentration.trim();
+        if (!value || selectedConcentrations.includes(value)) return;
+        setSelectedConcentrations(prev => [...prev, value]);
+        setCustomConcentration('');
+    };
+
     // Images
     const [images, setImages] = useState<any[]>(initialData?.product_images || []);
     const [uploading, setUploading] = useState(false);
@@ -197,6 +227,12 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
     const [metaDescription, setMetaDescription] = useState(initialData?.seo_description || '');
     const [urlSlug, setUrlSlug] = useState(initialData?.slug || '');
     const [keywords, setKeywords] = useState(initialData?.tags?.join(', ') || '');
+    const savedSeo = initialData?.metadata?.seo || {};
+    const [focusKeyword, setFocusKeyword] = useState(savedSeo.focusKeyword || '');
+    const [ogTitle, setOgTitle] = useState(savedSeo.ogTitle || '');
+    const [ogDescription, setOgDescription] = useState(savedSeo.ogDescription || '');
+    const [noindex, setNoindex] = useState(!!savedSeo.noindex);
+    const [slugTouched, setSlugTouched] = useState(!!initialData?.slug);
 
     const tabs = [
         { id: 'general', label: 'General', icon: 'ri-information-line' },
@@ -222,10 +258,10 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
 
     // Auto-generate slug from name if not manually edited
     useEffect(() => {
-        if (!isEditMode && productName && !urlSlug) {
+        if (!isEditMode && !slugTouched && productName) {
             setUrlSlug(productName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
         }
-    }, [productName, isEditMode, urlSlug]);
+    }, [productName, isEditMode, slugTouched]);
 
     // Auto-generate SKU for new products
     useEffect(() => {
@@ -296,7 +332,13 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                 tags: (keywords as string).split(',').map((k: string) => k.trim()).filter(Boolean),
                 metadata: {
                     low_stock_threshold: parseInt(lowStockThreshold) || 5,
-                    preorder_shipping: preorderShipping.trim() || null
+                    preorder_shipping: preorderShipping.trim() || null,
+                    seo: {
+                        focusKeyword,
+                        ogTitle,
+                        ogDescription,
+                        noindex
+                    }
                 }
             };
 
@@ -355,10 +397,14 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                             product_id: productId,
                             name: v.name || v.color || 'Default',
                             sku: v.sku || null,
+                            barcode: v.barcode || null,
                             price: parseFloat(v.price) || 0,
+                            compare_at_price: v.compare ? parseFloat(v.compare) : null,
+                            cost_per_item: v.cost ? parseFloat(v.cost) : null,
                             quantity: parseInt(v.stock) || 0,
-                            option1: v.name || null,
+                            option1: v.name?.split(' · ')[0] || null,
                             option2: v.color?.trim() || null,
+                            option3: v.concentration || null,
                             metadata: colorHex ? { color_hex: colorHex } : {}
                         };
                     });
@@ -689,7 +735,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                         <div className="space-y-8">
                             <div>
                                 <h3 className="text-lg font-bold text-gray-900">Product Variants</h3>
-                                <p className="text-gray-600 mt-1">Select colors and sizes below. Variants are generated automatically</p>
+                                <p className="text-gray-600 mt-1">Build bottles by volume, concentration, and finish. Add your own labels for anything that is not on the list.</p>
                             </div>
 
                             {/* STEP 1: Colors */}
@@ -775,14 +821,14 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                                 <h4 className="text-sm font-bold text-gray-900 mb-1 flex items-center">
                                     <i className="ri-ruler-line mr-2 text-lg text-brand"></i>
-                                    Step 2: Select Sizes
+                                    Step 2: Volume
                                     {selectedSizes.length > 0 && (
                                         <span className="ml-2 bg-brand-muted text-brand text-xs font-semibold px-2 py-0.5 rounded-full">
                                             {selectedSizes.length} selected
                                         </span>
                                     )}
                                 </h4>
-                                <p className="text-xs text-gray-500 mb-4">Click sizes to add/remove. Use custom for volumes (100ml), weights, etc.</p>
+                                <p className="text-xs text-gray-500 mb-4">Pick a bottle size, or type your own such as 10ml, 125ml, or a gift set.</p>
 
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {sizePresets.map(size => {
@@ -809,7 +855,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                         type="text"
                                         value={customSize}
                                         onChange={(e) => setCustomSize(e.target.value)}
-                                        placeholder="Custom size (e.g. 100ml, One Size, 42)"
+                                        placeholder="Custom volume, for example 10ml or gift set"
                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                         onKeyDown={(e) => e.key === 'Enter' && addCustomSize()}
                                     />
@@ -837,14 +883,53 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                 )}
                             </div>
 
-                            {/* STEP 3: Variant Grid */}
+                            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                                <h4 className="text-sm font-bold text-gray-900 mb-1 flex items-center">
+                                    <i className="ri-flask-line mr-2 text-lg text-brand"></i>
+                                    Step 3: Concentration
+                                    {selectedConcentrations.length > 0 && (
+                                        <span className="ml-2 bg-brand-muted text-brand text-xs font-semibold px-2 py-0.5 rounded-full">
+                                            {selectedConcentrations.length} selected
+                                        </span>
+                                    )}
+                                </h4>
+                                <p className="text-xs text-gray-500 mb-4">Optional. Skip this if every bottle is the same strength.</p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {concentrationPresets.map(value => {
+                                        const isSelected = selectedConcentrations.includes(value);
+                                        return (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                onClick={() => toggleConcentration(value)}
+                                                className={`px-4 py-2 rounded-lg border-2 text-sm font-semibold ${isSelected ? 'border-brand bg-cream text-brand' : 'border-gray-200 bg-white text-gray-700'}`}
+                                            >
+                                                {value}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                                    <input
+                                        type="text"
+                                        value={customConcentration}
+                                        onChange={(e) => setCustomConcentration(e.target.value)}
+                                        placeholder="Custom strength, for example Body mist"
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                        onKeyDown={(e) => e.key === 'Enter' && addCustomConcentration()}
+                                    />
+                                    <button type="button" onClick={addCustomConcentration} className="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium">Add</button>
+                                </div>
+                            </div>
+
+                            {/* STEP 4: Variant Grid */}
                             {variantCombinations.length > 0 && (
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                     <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                                         <div>
                                             <h4 className="text-sm font-bold text-gray-900 flex items-center">
                                                 <i className="ri-grid-line mr-2 text-lg text-purple-600"></i>
-                                                Step 3: Set Price & Stock ({variantCombinations.length} variant{variantCombinations.length > 1 ? 's' : ''})
+                                                Price, cost, and stock ({variantCombinations.length})
                                             </h4>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -877,15 +962,22 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                                         <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Color</th>
                                                     )}
                                                     {selectedSizes.length > 0 && (
-                                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Size</th>
+                                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Volume</th>
                                                     )}
-                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Price (GH₵)</th>
+                                                    {selectedConcentrations.length > 0 && (
+                                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Strength</th>
+                                                    )}
+                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Price</th>
+                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Compare</th>
+                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Cost</th>
                                                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stock</th>
+                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">SKU</th>
+                                                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Barcode</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {variantCombinations.map((combo) => {
-                                                    const d = variantData[combo.key] || { price: price, stock: '0', sku: '' };
+                                                    const d = variantData[combo.key] || blankVariant();
                                                     return (
                                                         <tr key={combo.key} className="border-b border-gray-100 hover:bg-gray-50">
                                                             {selectedColors.length > 0 && (
@@ -906,25 +998,20 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                                                                     </span>
                                                                 </td>
                                                             )}
-                                                            <td className="py-3 px-4">
-                                                                <input
-                                                                    type="number"
-                                                                    value={d.price}
-                                                                    onChange={(e) => updateVariantField(combo.key, 'price', e.target.value)}
-                                                                    className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-brand focus:border-brand"
-                                                                    step="0.01"
-                                                                    placeholder={price?.toString() || '0'}
-                                                                />
-                                                            </td>
-                                                            <td className="py-3 px-4">
-                                                                <input
-                                                                    type="number"
-                                                                    value={d.stock}
-                                                                    onChange={(e) => updateVariantField(combo.key, 'stock', e.target.value)}
-                                                                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-brand focus:border-brand"
-                                                                    placeholder="0"
-                                                                />
-                                                            </td>
+                                                            {selectedConcentrations.length > 0 && (
+                                                                <td className="py-3 px-4 text-sm font-medium">{combo.concentration}</td>
+                                                            )}
+                                                            {(['price', 'compare', 'cost', 'stock', 'sku', 'barcode'] as const).map((field) => (
+                                                                <td key={field} className="py-3 px-4">
+                                                                    <input
+                                                                        type={field === 'sku' || field === 'barcode' ? 'text' : 'number'}
+                                                                        value={d[field]}
+                                                                        onChange={(e) => updateVariantField(combo.key, field, e.target.value)}
+                                                                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                                        step={field === 'sku' || field === 'barcode' ? undefined : '0.01'}
+                                                                    />
+                                                                </td>
+                                                            ))}
                                                         </tr>
                                                     );
                                                 })}
@@ -1011,74 +1098,139 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                     )}
 
                     {activeTab === 'seo' && (
-                        <div className="space-y-6 max-w-3xl">
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-1">Search Engine Optimization</h3>
-                                <p className="text-gray-600">Optimize how this product appears in search results</p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                    Page Title
-                                </label>
-                                <input
-                                    type="text"
-                                    value={seoTitle}
-                                    onChange={(e) => setSeoTitle(e.target.value)}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                                    placeholder="Seo friendly title"
-                                />
-                                <p className="text-sm text-gray-500 mt-2">60 characters recommended</p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                    Meta Description
-                                </label>
-                                <textarea
-                                    rows={3}
-                                    maxLength={500}
-                                    value={metaDescription}
-                                    onChange={(e) => setMetaDescription(e.target.value)}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand resize-none"
-                                    placeholder="Seo friendly description"
-                                />
-                                <p className="text-sm text-gray-500 mt-2">160 characters recommended</p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                    URL Slug
-                                </label>
-                                <div className="flex items-center">
-                                    <span className="text-gray-600 bg-gray-100 px-4 py-3 border-2 border-r-0 border-gray-300 rounded-l-lg">
-                                        store.com/product/
-                                    </span>
-                                    <input
-                                        type="text"
-                                        value={urlSlug}
-                                        onChange={(e) => setUrlSlug(e.target.value)}
-                                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                                        placeholder="product-slug"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                                    Keywords
-                                </label>
-                                <input
-                                    type="text"
-                                    value={keywords}
-                                    onChange={(e) => setKeywords(e.target.value)}
-                                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                                    placeholder="keyword1, keyword2"
-                                />
-                                <p className="text-sm text-gray-500 mt-2">Separate keywords with commas</p>
-                            </div>
-                        </div>
+                        <SeoPanel
+                            productName={productName}
+                            description={description}
+                            seoTitle={seoTitle}
+                            setSeoTitle={setSeoTitle}
+                            metaDescription={metaDescription}
+                            setMetaDescription={setMetaDescription}
+                            urlSlug={urlSlug}
+                            setUrlSlug={(value) => { setSlugTouched(true); setUrlSlug(value); }}
+                            keywords={keywords}
+                            setKeywords={setKeywords}
+                            focusKeyword={focusKeyword}
+                            setFocusKeyword={setFocusKeyword}
+                            ogTitle={ogTitle}
+                            setOgTitle={setOgTitle}
+                            ogDescription={ogDescription}
+                            setOgDescription={setOgDescription}
+                            noindex={noindex}
+                            setNoindex={setNoindex}
+                            imageCount={images.length}
+                        />
                     )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function slugify(value: string) {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
+function SeoPanel({
+    productName, description, seoTitle, setSeoTitle, metaDescription, setMetaDescription,
+    urlSlug, setUrlSlug, keywords, setKeywords, focusKeyword, setFocusKeyword,
+    ogTitle, setOgTitle, ogDescription, setOgDescription, noindex, setNoindex, imageCount,
+}: {
+    productName: string;
+    description: string;
+    seoTitle: string;
+    setSeoTitle: (value: string) => void;
+    metaDescription: string;
+    setMetaDescription: (value: string) => void;
+    urlSlug: string;
+    setUrlSlug: (value: string) => void;
+    keywords: string;
+    setKeywords: (value: string) => void;
+    focusKeyword: string;
+    setFocusKeyword: (value: string) => void;
+    ogTitle: string;
+    setOgTitle: (value: string) => void;
+    ogDescription: string;
+    setOgDescription: (value: string) => void;
+    noindex: boolean;
+    setNoindex: (value: boolean) => void;
+    imageCount: number;
+}) {
+    const title = seoTitle || `${productName || 'Product'} | The Perfume Empire`;
+    const snippet = metaDescription || description || 'Add a description so Google has something to show.';
+    const slug = urlSlug || 'product-slug';
+    const keyword = focusKeyword.trim().toLowerCase();
+    const checks = [
+        { ok: title.length >= 45 && title.length <= 60, label: 'Title is 45–60 characters' },
+        { ok: snippet.length >= 120 && snippet.length <= 160, label: 'Description is 120–160 characters' },
+        { ok: !keyword || title.toLowerCase().includes(keyword), label: 'Focus keyword is in the title' },
+        { ok: !keyword || snippet.toLowerCase().includes(keyword), label: 'Focus keyword is in the description' },
+        { ok: !keyword || slug.includes(slugify(keyword)), label: 'Focus keyword is in the URL' },
+        { ok: imageCount > 0, label: 'Product has at least one image' },
+    ];
+    const score = checks.filter((item) => item.ok).length;
+
+    return (
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8">
+            <div className="space-y-5">
+                <div>
+                    <h3 className="text-lg font-bold text-gray-900">Search listing</h3>
+                    <p className="text-gray-600 text-sm">This is what Google and link previews can show for this bottle.</p>
+                </div>
+                <label className="block text-sm font-semibold">Focus keyword
+                    <input value={focusKeyword} onChange={(e) => setFocusKeyword(e.target.value)} placeholder="oud perfume Accra" className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" />
+                </label>
+                <label className="block text-sm font-semibold">Page title
+                    <input value={seoTitle} maxLength={70} onChange={(e) => setSeoTitle(e.target.value)} placeholder={`${productName || 'Product name'} | The Perfume Empire`} className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" />
+                    <span className={`text-xs ${title.length > 60 ? 'text-red-600' : 'text-gray-500'}`}>{title.length}/60 shown in Google</span>
+                </label>
+                <label className="block text-sm font-semibold">Meta description
+                    <textarea value={metaDescription} maxLength={320} rows={4} onChange={(e) => setMetaDescription(e.target.value)} className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" placeholder="Who it is for, the main notes, and where to buy it." />
+                    <span className={`text-xs ${snippet.length > 160 ? 'text-red-600' : 'text-gray-500'}`}>{snippet.length}/160 shown in Google</span>
+                </label>
+                <div>
+                    <label className="block text-sm font-semibold mb-2">URL</label>
+                    <div className="flex">
+                        <span className="bg-gray-100 px-3 py-3 border-2 border-r-0 border-gray-300 rounded-l-lg text-sm text-gray-600">tpeperfumes.com/product/</span>
+                        <input value={urlSlug} onChange={(e) => setUrlSlug(slugify(e.target.value))} className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-r-lg" />
+                    </div>
+                    <button type="button" className="mt-2 text-sm font-semibold text-brand" onClick={() => setUrlSlug(slugify(productName || focusKeyword))}>Build slug from the product name</button>
+                </div>
+                <label className="block text-sm font-semibold">Keywords
+                    <input value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="oud, east legon, niche perfume" className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" />
+                </label>
+                <div className="grid sm:grid-cols-2 gap-3">
+                    <label className="block text-sm font-semibold">Share title
+                        <input value={ogTitle} onChange={(e) => setOgTitle(e.target.value)} placeholder="Uses the page title if empty" className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" />
+                    </label>
+                    <label className="block text-sm font-semibold">Share description
+                        <input value={ogDescription} onChange={(e) => setOgDescription(e.target.value)} placeholder="Uses the meta description if empty" className="mt-2 w-full px-4 py-3 border-2 border-gray-300 rounded-lg" />
+                    </label>
+                </div>
+                <label className="flex items-center gap-2 text-sm font-medium">
+                    <input type="checkbox" checked={noindex} onChange={(e) => setNoindex(e.target.checked)} />
+                    Hide this product from Google
+                </label>
+                <div className="flex flex-wrap gap-2">
+                    <button type="button" className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white" onClick={() => setSeoTitle(`${productName} | The Perfume Empire`.slice(0, 60))}>Write title</button>
+                    <button type="button" className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold" onClick={() => setMetaDescription((description || `${productName} from The Perfume Empire in East Legon.`).slice(0, 160))}>Write description</button>
+                </div>
+            </div>
+            <div className="space-y-4">
+                <div className="rounded-2xl border border-gray-200 bg-white p-5">
+                    <p className="text-xs uppercase tracking-wide text-gray-400 mb-3">Google preview</p>
+                    <p className="text-[#1a0dab] text-lg leading-snug">{title.slice(0, 60)}</p>
+                    <p className="text-[#006621] text-sm mt-1">tpeperfumes.com/product/{slug}</p>
+                    <p className="text-sm text-gray-600 mt-1">{snippet.slice(0, 160)}</p>
+                </div>
+                <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                    <p className="font-semibold">Listing score {score}/{checks.length}</p>
+                    <ul className="mt-3 space-y-2 text-sm">
+                        {checks.map((item) => (
+                            <li key={item.label} className={item.ok ? 'text-green-700' : 'text-gray-500'}>
+                                {item.ok ? 'Ready' : 'Missing'} · {item.label}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </div>
         </div>
