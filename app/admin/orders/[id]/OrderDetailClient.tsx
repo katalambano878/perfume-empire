@@ -48,62 +48,22 @@ export default function OrderDetailClient({ orderId }: OrderDetailClientProps) {
     try {
       setLoading(true);
       // Try to fetch by ID or order_number
-      let query = db
-        .from('orders')
-        .select(`
-          *,
-          order_items (
-            id,
-            product_id,
-            product_name,
-            variant_name,
-            sku,
-            quantity,
-            unit_price,
-            total_price,
-            metadata,
-            products (
-              product_images (url)
-            )
-          )
-        `)
-        .eq('id', orderId);
-
-      let { data, error } = await query.single();
-
-      if (error && error.code === 'PGRST116') {
-        // Not found by ID, try order_number
-        const { data: dataByNum, error: errorByNum } = await db
-          .from('orders')
-          .select(`
-            *,
-            order_items (
-              id,
-              product_id,
-              product_name,
-              variant_name,
-              sku,
-              quantity,
-              unit_price,
-              total_price,
-              metadata,
-              products (
-                product_images (url)
-              )
-            )
-          `)
-          .eq('order_number', orderId)
-          .single();
-
-        if (dataByNum) {
-          data = dataByNum;
-          error = null;
-        } else {
-          error = errorByNum;
-        }
+      const byId = await db.from('orders').select('*').eq('id', orderId).limit(1);
+      let row = Array.isArray(byId.data) ? byId.data[0] : byId.data;
+      if (!row) {
+        const byNumber = await db.from('orders').select('*').eq('order_number', orderId).limit(1);
+        row = Array.isArray(byNumber.data) ? byNumber.data[0] : byNumber.data;
+        if (!row && byNumber.error) throw byNumber.error;
       }
+      if (byId.error && !row) throw byId.error;
+      if (!row) throw new Error('Order not found');
 
-      if (error) throw error;
+      const { data: items } = await db
+        .from('order_items')
+        .select('id, product_id, product_name, variant_name, sku, quantity, unit_price, total_price, metadata')
+        .eq('order_id', row.id);
+
+      const data = { ...row, order_items: items || [] };
       setOrder(data);
       setTrackingNumber(data.metadata?.tracking_number || '');
       setAdminNotes(data.notes || '');

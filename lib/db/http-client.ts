@@ -58,10 +58,10 @@ class HttpQuery {
   private columns = "*";
   private params = new URLSearchParams();
   private body: unknown = null;
-  private single = false;
+  private wantSingle = false;
   private maybe = false;
   private countExact = false;
-  private upsert = false;
+  private mergeRows = false;
   private onConflict?: string;
 
   constructor(table: string) {
@@ -89,7 +89,7 @@ class HttpQuery {
   upsert(row: unknown, opts?: { onConflict?: string }) {
     this.method = "POST";
     this.body = row;
-    this.upsert = true;
+    this.mergeRows = true;
     this.onConflict = opts?.onConflict;
     return this;
   }
@@ -161,18 +161,18 @@ class HttpQuery {
     return this;
   }
   single() {
-    this.single = true;
+    this.wantSingle = true;
     return this;
   }
   maybeSingle() {
     this.maybe = true;
-    this.single = true;
+    this.wantSingle = true;
     return this;
   }
 
   saveOne() {
     this.select("*");
-    this.single = true;
+    this.wantSingle = true;
     return this.execute();
   }
 
@@ -194,9 +194,9 @@ class HttpQuery {
     const prefer: string[] = [];
     if (this.method !== "GET") prefer.push("return=representation");
     if (this.countExact) prefer.push("count=exact");
-    if (this.upsert) prefer.push("resolution=merge-duplicates");
+    if (this.mergeRows) prefer.push("resolution=merge-duplicates");
     if (prefer.length) headers.Prefer = prefer.join(",");
-    if (this.single) headers.Accept = "application/vnd.pgrst.object+json";
+    if (this.wantSingle) headers.Accept = "application/vnd.pgrst.object+json";
 
     const url = `${origin()}/rest/v1/${this.table}?${params.toString()}`;
     const res = await fetch(url, {
@@ -229,7 +229,7 @@ class HttpQuery {
       return { data: null, error: { message }, count };
     }
 
-    if (this.single && Array.isArray(payload)) {
+    if (this.wantSingle && Array.isArray(payload)) {
       payload = payload[0] ?? null;
       if (!payload && !this.maybe) {
         return { data: null, error: { message: "No rows" }, count };

@@ -312,11 +312,7 @@ export default function ProductForm({ initialData, isEditMode = false }: Product
                 error = updateError;
             } else {
                 // Create new
-                const { data: newProduct, error: insertError } = await db
-                    .from('products')
-                    .insert([productData])
-                    .select()
-                    .single();
+                const { data: newProduct, error: insertError } = await db.insertOne('products', productData);
 
                 if (newProduct) productId = newProduct.id;
                 error = insertError;
