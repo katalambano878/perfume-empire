@@ -6,6 +6,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import { db } from '@/lib/db/http-client';
 import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookie';
 
+function readCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function roleFromToken(token: string): { userId?: string; role?: string } {
+  try {
+    const part = token.split('.')[1];
+    if (!part) return {};
+    const json = atob(part.replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = JSON.parse(json);
+    const role = payload?.app_metadata?.role;
+    const userId = typeof payload?.sub === 'string' ? payload.sub : undefined;
+    return { userId, role: typeof role === 'string' ? role : undefined };
+  } catch {
+    return {};
+  }
+}
+
 export default function AdminLayout({
   children,
 }: {
@@ -24,48 +44,62 @@ export default function AdminLayout({
   const [enabledModules, setEnabledModules] = useState<string[]>([]);
 
   useEffect(() => {
-    async function checkAuth() {
-      const { data: { session } } = await db.auth.getSession();
+    let cancelled = false;
 
+    async function checkAuth() {
       if (pathname === '/admin/login') {
         setIsLoading(false);
         return;
       }
 
-      if (!session) {
-        router.push('/admin/login');
-        return;
+      try {
+        const { data: { session } } = await db.auth.getSession();
+        const token = session?.access_token || readCookie('pe-access-token') || readCookie('sb-access-token');
+
+        if (!token) {
+          window.location.replace(`/admin/login?redirect=${encodeURIComponent(pathname)}`);
+          return;
+        }
+
+        const fromToken = roleFromToken(token);
+        const userId = session?.user?.id || fromToken.userId;
+        let role = fromToken.role;
+
+        if (role !== 'admin' && role !== 'staff') {
+          clearAuthCookies();
+          await db.auth.signOut();
+          window.location.replace('/admin/login?error=unauthorized');
+          return;
+        }
+
+        if (cancelled) return;
+        if (session?.access_token) setAuthCookies(session.access_token, session.refresh_token);
+        setUser(session?.user || { id: userId, email: '' });
+        setUserRole(role);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+
+        if (userId) {
+          const { data: profile, error: profileError } = await db
+            .from('profiles')
+            .select('role')
+            .eq('id', userId)
+            .maybeSingle();
+          if (cancelled || profileError || !profile?.role) return;
+          if (profile.role !== 'admin' && profile.role !== 'staff') {
+            clearAuthCookies();
+            await db.auth.signOut();
+            window.location.replace('/admin/login?error=unauthorized');
+            return;
+          }
+          setUserRole(profile.role);
+        }
+      } catch (err) {
+        console.error('Admin auth check failed', err);
+        if (!cancelled) {
+          window.location.replace('/admin/login?error=session_expired');
+        }
       }
-
-      // Ensure auth cookie is set (in case user already had a session from before)
-      setAuthCookies(session.access_token);
-
-      // Check user role from profiles table
-      const { data: profile, error: profileError } = await db
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('Failed to fetch user profile');
-        router.push('/admin/login');
-        return;
-      }
-
-      // Only allow admin and staff roles
-      if (profile.role !== 'admin' && profile.role !== 'staff') {
-        console.warn('User does not have admin/staff role');
-        clearAuthCookies();
-        await db.auth.signOut();
-        router.push('/admin/login?error=unauthorized');
-        return;
-      }
-
-      setUser(session.user);
-      setUserRole(profile.role);
-      setIsAuthenticated(true);
-      setIsLoading(false);
     }
 
     checkAuth();
@@ -80,7 +114,10 @@ export default function AdminLayout({
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, [pathname, router]);
 
   useEffect(() => {
