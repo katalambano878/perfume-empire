@@ -46,8 +46,9 @@ export default function InventoryManagementPage() {
           return {
             id: p.id,
             name: p.name,
+            slug: p.slug,
             sku: p.sku || 'N/A',
-            category: categoryData?.[0]?.name || 'Uncategorized',
+            category: (Array.isArray(categoryData) ? categoryData[0]?.name : (categoryData as { name?: string } | null)?.name) || 'Uncategorized',
             currentStock: stock,
             reorderLevel: 10, // Default
             reorderQuantity: 50, // Default
@@ -340,18 +341,20 @@ export default function InventoryManagementPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-2">
-                          <button
+                          <a
+                            href={`/admin/products/${product.id}`}
                             className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-brand transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <i className="ri-edit-line text-lg"></i>
-                          </button>
-                          <button
+                          </a>
+                          <a
+                            href={`/product/${product.slug || product.id}`}
                             className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-brand transition-colors cursor-pointer"
-                            title="View Details"
+                            title="View on the shop"
                           >
                             <i className="ri-eye-line text-lg"></i>
-                          </button>
+                          </a>
                         </div>
                       </td>
                     </tr>

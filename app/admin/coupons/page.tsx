@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { db } from '@/lib/db/http-client';
 
 export default function AdminCouponsPage() {
@@ -29,11 +29,11 @@ export default function AdminCouponsPage() {
         setCoupons(data.map((c: any) => ({
           id: c.id,
           code: c.code,
-          type: c.discount_type || 'Percentage', // Adjust key if needed (e.g. type)
-          value: c.discount_value || c.value || 0,
-          minPurchase: c.min_purchase_amount || 0,
+          type: c.type || c.discount_type || 'percentage',
+          value: c.value || c.discount_value || 0,
+          minPurchase: c.minimum_purchase || c.min_purchase_amount || 0,
           usageLimit: c.usage_limit || null,
-          usedCount: c.times_used || 0,
+          usedCount: c.usage_count || c.times_used || 0,
           startDate: c.start_date ? new Date(c.start_date).toLocaleDateString() : 'N/A',
           endDate: c.end_date ? new Date(c.end_date).toLocaleDateString() : null,
           status: isCouponActive(c) ? 'Active' : 'Expired' // Derive status
@@ -207,19 +207,60 @@ export default function AdminCouponsPage() {
 
       {/* Modals omitted for brevity but logic remains for state */}
       {(showAddModal || showEditModal) && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 rounded-lg max-w-lg w-full">
-            <h2 className="text-xl font-bold mb-4">Manage Coupon</h2>
-            <p className="text-gray-600 mb-6">Coupon management functionality coming soon.</p>
-            <button
-              onClick={() => { setShowAddModal(false); setShowEditModal(false); }}
-              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        <CouponForm
+          onClose={() => { setShowAddModal(false); setShowEditModal(false); }}
+          onSaved={() => { setShowAddModal(false); setShowEditModal(false); fetchCoupons(); }}
+        />
       )}
+    </div>
+  );
+}
+
+function CouponForm({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const [code, setCode] = useState('');
+  const [type, setType] = useState('percentage');
+  const [value, setValue] = useState('');
+  const [minimum, setMinimum] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const save = async (event: FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    setError('');
+    const { error: insertError } = await db.from('coupons').insert({
+      code: code.trim().toUpperCase(),
+      type,
+      value: Number(value),
+      minimum_purchase: Number(minimum || 0),
+      is_active: true,
+    });
+    setSaving(false);
+    if (insertError) {
+      setError(insertError.message || 'Could not save the coupon');
+      return;
+    }
+    onSaved();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <form onSubmit={save} className="bg-white p-8 rounded-lg max-w-lg w-full space-y-4">
+        <h2 className="text-xl font-bold">New coupon</h2>
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code, for example OUD10" className="w-full border border-gray-200 rounded-lg px-3 py-2" required />
+        <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-gray-200 rounded-lg px-3 py-2">
+          <option value="percentage">Percentage off</option>
+          <option value="fixed_amount">Fixed amount off</option>
+          <option value="free_shipping">Free shipping</option>
+        </select>
+        <input value={value} onChange={(e) => setValue(e.target.value)} type="number" min="0" step="0.01" placeholder="Value" className="w-full border border-gray-200 rounded-lg px-3 py-2" required />
+        <input value={minimum} onChange={(e) => setMinimum(e.target.value)} type="number" min="0" step="0.01" placeholder="Minimum purchase (optional)" className="w-full border border-gray-200 rounded-lg px-3 py-2" />
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <div className="flex gap-2">
+          <button type="submit" disabled={saving} className="px-4 py-2 bg-ink text-white rounded-lg disabled:opacity-50">{saving ? 'Saving...' : 'Save coupon'}</button>
+          <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-lg">Close</button>
+        </div>
+      </form>
     </div>
   );
 }

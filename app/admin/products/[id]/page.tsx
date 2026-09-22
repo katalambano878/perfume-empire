@@ -14,17 +14,28 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       try {
         const { data, error } = await db
           .from('products')
-          .select(`
-            *,
-            categories(id, name),
-            product_variants(*),
-            product_images(*)
-          `)
+          .select('*')
           .eq('id', resolvedParams.id)
-          .single();
+          .limit(1);
 
         if (error) throw error;
-        setProductData(data);
+        const product = Array.isArray(data) ? data[0] : data;
+        if (!product) return;
+
+        const [{ data: images }, { data: variants }, { data: category }] = await Promise.all([
+          db.from('product_images').select('*').eq('product_id', product.id),
+          db.from('product_variants').select('*').eq('product_id', product.id),
+          product.category_id
+            ? db.from('categories').select('id, name').eq('id', product.category_id).limit(1)
+            : Promise.resolve({ data: null }),
+        ]);
+        const categoryRow = Array.isArray(category) ? category[0] : category;
+        setProductData({
+          ...product,
+          product_images: images || [],
+          product_variants: variants || [],
+          categories: categoryRow || null,
+        });
       } catch (error) {
         console.error('Error fetching product:', error);
       } finally {

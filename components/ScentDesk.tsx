@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -41,6 +44,29 @@ const CATEGORIES = [
 ];
 
 export default function ScentDesk() {
+  const [live, setLive] = useState<Array<{ name: string; note: string; href: string; image: string }>>([]);
+
+  useEffect(() => {
+    fetch('/api/storefront/categories')
+      .then((res) => res.json())
+      .then((rows) => {
+        if (!Array.isArray(rows) || rows.length === 0) return;
+        const fallback = CATEGORIES.find((item) => item.name === 'Shop all')!;
+        setLive([
+          ...rows.map((row: { name: string; slug: string; image_url?: string; description?: string }) => ({
+            name: row.name,
+            note: row.description || 'From the shop shelves',
+            href: `/shop?category=${row.slug}`,
+            image: row.image_url || fallback.image,
+          })),
+          fallback,
+        ]);
+      })
+      .catch(() => {});
+  }, []);
+
+  const tiles = live.length ? live : CATEGORIES;
+
   return (
     <section className="bg-cream py-14 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -65,7 +91,7 @@ export default function ScentDesk() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {CATEGORIES.map((cat) => (
+          {tiles.map((cat) => (
             <Link
               key={cat.name}
               href={cat.href}

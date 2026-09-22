@@ -170,6 +170,12 @@ class HttpQuery {
     return this;
   }
 
+  saveOne() {
+    this.select("*");
+    this.single = true;
+    return this.execute();
+  }
+
   then<TResult1 = QueryResult, TResult2 = never>(
     onfulfilled?: ((value: QueryResult) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
@@ -272,6 +278,11 @@ function sessionFromAuthPayload(payload: any): Session | null {
 export const db = {
   from(table: string) {
     return new HttpQuery(table);
+  },
+  async insertOne(table: string, row: Record<string, unknown>) {
+    const query = new HttpQuery(table);
+    query.insert([row]);
+    return query.saveOne();
   },
   rpc(fn: string, args: Record<string, any> = {}) {
     return fetch(`${origin()}/rest/v1/rpc/${fn}`, {

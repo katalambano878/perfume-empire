@@ -267,10 +267,7 @@ export default function POSPage() {
                 pos_sale: true
             };
 
-            // 1. Create Order
-            const { data: order, error: orderError } = await db
-                .from('orders')
-                .insert([{
+            const { data: order, error: orderError } = await db.insertOne('orders', {
                     order_number: orderNumber,
                     user_id: null,
                     email: customerEmail,
@@ -296,11 +293,9 @@ export default function POSPage() {
                         discount: discountTotal,
                         sold_by: seller
                     }
-                }])
-                .select()
-                .single();
+                });
 
-            if (orderError) throw orderError;
+            if (orderError || !order?.id) throw new Error(orderError?.message || 'Could not save the sale');
 
             // 2. Create Order Items (with product_name, unit_price, total_price)
             const orderItems = cart.map(item => ({

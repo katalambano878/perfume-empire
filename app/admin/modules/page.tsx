@@ -138,19 +138,22 @@ export default function ModulesPage() {
     ));
 
     try {
-      const { error } = await db
-        .from('store_modules')
-        .upsert({ id, enabled: newState, updated_at: new Date().toISOString() });
+      const payload = { id, enabled: newState, updated_at: new Date().toISOString() };
+      const existing = await db.from('store_modules').select('id').eq('id', id).limit(1);
+      const already = Array.isArray(existing.data) ? existing.data[0] : existing.data;
+      const { error } = already
+        ? await db.from('store_modules').update({ enabled: newState, updated_at: payload.updated_at }).eq('id', id)
+        : await db.from('store_modules').insert(payload);
 
       if (error) {
-        throw error;
+        throw new Error(error.message || 'Could not save the module');
       }
 
       window.location.reload();
 
     } catch (err) {
       console.error('Error updating module:', err);
-      alert('Failed to update settings');
+      alert(err instanceof Error ? err.message : 'Failed to update settings');
     }
   };
 
