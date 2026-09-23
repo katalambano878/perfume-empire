@@ -104,14 +104,14 @@ export default function ProductCard({
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white">
       <Link
         href={`/product/${slug}`}
-        className="relative block aspect-[4/5] overflow-hidden bg-[#f7f7f7]"
+        className="relative block aspect-[5/4] overflow-hidden bg-[#f7f7f7]"
         onMouseEnter={() => setHoverScent(true)}
         onMouseLeave={() => setHoverScent(false)}
       >
         <LazyImage
           src={displayImage}
           alt={name}
-          className="h-full w-full object-contain object-center p-4 transition-transform duration-500 group-hover:scale-[1.04]"
+          className="h-full w-full object-contain object-center p-2 transition-transform duration-500 group-hover:scale-[1.04]"
         />
 
         {label && (
@@ -145,9 +145,9 @@ export default function ProductCard({
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col px-3.5 pb-3.5 pt-3">
+      <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5">
         <Link href={`/product/${slug}`}>
-          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-ink">
             {name}
           </h3>
         </Link>
@@ -192,11 +192,11 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="mt-auto pt-3">
+        <div className="mt-auto pt-2">
           {hasVariants ? (
             <Link
               href={`/product/${slug}`}
-              className="flex w-full items-center justify-center rounded-full bg-ink py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-brand"
+              className="flex w-full items-center justify-center rounded-full bg-ink py-2 text-xs font-semibold text-white transition-colors hover:bg-brand"
             >
               Select options
             </Link>
@@ -208,7 +208,7 @@ export default function ProductCard({
                 addToCart({ id, name, price, image: displayImage, quantity: moq, slug, maxStock, moq });
               }}
               disabled={!inStock}
-              className="flex w-full items-center justify-center rounded-full bg-ink py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex w-full items-center justify-center rounded-full bg-ink py-2 text-xs font-semibold text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-40"
             >
               {inStock ? (moq > 1 ? `Add ${moq} to bag` : 'Add to bag') : 'Out of stock'}
             </button>

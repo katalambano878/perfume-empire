@@ -7,6 +7,7 @@
 import { createHmac } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
+import sharp from "sharp";
 
 const STORAGE_ROOT =
   process.env.STORAGE_ROOT || path.join(process.cwd(), ".storage");
@@ -89,6 +90,27 @@ function guessContentType(p: string): string {
   return map[ext] || "application/octet-stream";
 }
 
+/** Shrink uploads in place so the shop stays fast. The file type stays the same as the saved path. */
+async function compressUpload(buf: Buffer, contentType: string): Promise<Buffer> {
+  if (!contentType.startsWith("image/") || contentType === "image/svg+xml") return buf;
+  try {
+    const pipeline = sharp(buf, { animated: contentType === "image/gif", failOn: "none" })
+      .rotate()
+      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true });
+    const out =
+      contentType === "image/png"
+        ? await pipeline.png({ compressionLevel: 9 }).toBuffer()
+        : contentType === "image/webp"
+          ? await pipeline.webp({ quality: 78 }).toBuffer()
+          : contentType === "image/gif"
+            ? await pipeline.gif().toBuffer()
+            : await pipeline.jpeg({ quality: 80, mozjpeg: true }).toBuffer();
+    return out.length > 0 && out.length < buf.length ? out : buf;
+  } catch {
+    return buf;
+  }
+}
+
 interface BucketApi {
   upload(
     objectPath: string,
@@ -124,6 +146,8 @@ export function createStorageClient(): StorageClient {
             } else {
               buf = Buffer.from(data as any);
             }
+            const type = opts?.contentType || contentTypeFromPath(objectPath);
+            buf = await compressUpload(buf, type);
             await fs.writeFile(full, buf);
             if (opts?.contentType) {
               await fs.writeFile(
