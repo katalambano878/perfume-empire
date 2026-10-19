@@ -211,6 +211,11 @@ export default function AdminLayout({
       permission: 'pos'
     },
     {
+      title: 'Buy SMS',
+      icon: 'ri-message-2-line',
+      path: '/admin/sms-credit'
+    },
+    {
       title: 'End of day',
       icon: 'ri-moon-line',
       path: '/admin/end-of-day',
@@ -288,11 +293,6 @@ export default function AdminLayout({
       icon: 'ri-article-line',
       path: '/admin/blog',
       moduleId: 'blog'
-    },
-    {
-      title: 'Buy SMS',
-      icon: 'ri-message-2-line',
-      path: '/admin/sms-credit'
     },
     {
       title: 'Modules',
