@@ -92,7 +92,10 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/45">
-          <p>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved. &middot; Powered by{' '}
+            <a href="https://doctorbarns.com" target="_blank" rel="noopener" className="hover:text-brand hover:underline transition-colors">Doctor Barns Tech</a>
+          </p>
           <p className="inline-flex items-center gap-4">
             <span>East Legon, near America House</span>
             <span>WhatsApp 055 396 7658</span>
