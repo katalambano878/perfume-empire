@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { db } from '@/lib/db/http-client';
 import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookie';
+import { SmsCreditDashboardCard } from '@/components/admin/SmsCreditDashboardCard';
 
 function readCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
@@ -430,6 +431,7 @@ export default function AdminLayout({
           </div>
         </header>
 
+        <SmsCreditDashboardCard />
         <main className="p-4 lg:p-6">
           {children}
         </main>
