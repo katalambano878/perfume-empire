@@ -7,7 +7,6 @@
 import { createHmac } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
-import sharp from "sharp";
 
 const STORAGE_ROOT =
   process.env.STORAGE_ROOT || path.join(process.cwd(), ".storage");
@@ -94,6 +93,7 @@ function guessContentType(p: string): string {
 async function compressUpload(buf: Buffer, contentType: string): Promise<Buffer> {
   if (!contentType.startsWith("image/") || contentType === "image/svg+xml") return buf;
   try {
+    const { default: sharp } = await import("sharp");
     const pipeline = sharp(buf, { animated: contentType === "image/gif", failOn: "none" })
       .rotate()
       .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true });
